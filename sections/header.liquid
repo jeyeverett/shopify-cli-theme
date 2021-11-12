@@ -22,25 +22,10 @@
                 >
                     Account
                 </a>
-                <a 
-                    href="/account/logout"
-                    class="text-gray-400 hover:text-gray-700 transition-all block"
-                >
-                    Logout
-                </a>
+                {{ 'Logout' | customer_logout_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
             {% else %}
-                <a 
-                    href="/account/login"
-                    class="text-gray-400 hover:text-gray-700 transition-all block"
-                >
-                    Login
-                </a>
-                <a 
-                    href="/account/register"
-                    class="text-gray-400 hover:text-gray-700 transition-all block"
-                >
-                    Register
-                </a>
+                {{ 'Login' | customer_login_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
+                {{ 'Register' | customer_register_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
             {% endif %}
             </div>
         {% endif %}
@@ -82,7 +67,10 @@
 </header>
 
 <script>
+store.onReady(() => {console.log('store event fired')});
+
 store.onReady(() => {
+    console.log('vue app loading');
     const header = document.getElementById('header');
     const Header = Vue.createApp({
         data() {
@@ -93,6 +81,9 @@ store.onReady(() => {
         created() {
             console.log('Header created!');
         },
+        updated() {
+            console.log('updated');
+        },
         computed: {
             isAccountVisible() {
                 return store.vue.state.account.visible;
@@ -100,6 +91,7 @@ store.onReady(() => {
         },  
         methods: {
             toggleAccountModal() {
+                console.log('toggling');
                 store.vue.toggleAccountModal();
             },
             closeAllModals() {

@@ -8,11 +8,11 @@ const store = {
   },
   set ready(val) {
     this.isReady = val;
-    this.readyListener(val);
+    this.readyListeners.forEach((func) => func());
   },
-  readyListener: function (val) {},
+  readyListeners: [],
   onReady: function (callback) {
-    this.readyListener = callback;
+    this.readyListeners.push(callback);
   },
 };
 
@@ -26,7 +26,6 @@ document.getElementById("vue").onload = () => {
         visible: false,
       },
     },
-
     toggleCartModal() {
       this.state.cart.visible = !this.state.cart.visible;
     },
