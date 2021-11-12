@@ -1,0 +1,57 @@
+<header class="relative bg-white">
+  <nav class="flex justify-between items-center px-8 py-4">
+    <span>
+      <button class="md:hidden">{% render 'menu-icon' %}</button>
+      <button>{% render 'search-icon' %}</button>
+    </span>
+    <span class="text-xl font-bold">{{ shop.name }}</span>
+    <span class="space-x-6">
+      <button>{% render 'user-icon' %}</button>
+      <button>{% render 'cart-icon' %}</button>
+    </span>
+  </nav>
+  <nav class="mt-2 px-6 w-5/6 hidden md:flex justify-center mx-auto border-t border-b border-gray-300">
+      <ul class="space-x-6 flex items-center">
+          {% for link in section.settings.menu.links %}
+              {% if link.links != blank %}
+                  <li class="relative group transition-all cursor-pointer list-none h-full flex">
+                      <button class="flex items-center">
+                          <span class="mr-1">{{ link.title }}</span>
+                          {% render 'caret-icon' %}
+                      </button>
+                      <span 
+                        class="hidden group-hover:flex absolute" 
+                        style="top: 40.5px"
+                      >
+                          <ul class="flex flex-col absolute border border-gray-300 px-6 py-2 bg-white min-w-max">
+                              {% for childLink in link.links %}
+                                  <li class="list-none text-gray-400 hover:text-gray-700 transition-all block">
+                                      <a href="{{ childLink.url }}">{{ childLink.title }}</a>
+                                  </li>
+                              {% endfor %}
+                          </ul>
+                      </span>
+                  </li>
+              {% else %}
+                  <li class="list-none py-2">
+                      <a href="{{ link.url }}">{{ link.title }}</a>
+                  </li>
+              {% endif %} 
+          {% endfor %}
+        </ul>
+  </nav>
+</header>
+
+{% schema %}
+{
+    "name": "Header",
+    "settings": [
+        {
+            "type": "link_list",
+            "id": "menu",
+            "default": "main-menu",
+            "label": "Heading Navigation Menu"
+        }
+    ]
+}
+{% endschema %}
