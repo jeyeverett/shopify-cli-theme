@@ -1,13 +1,50 @@
-<header class="relative bg-white">
-  <nav class="flex justify-between items-center px-8 py-4">
-    <span>
+<header class="relative bg-white" id="header">
+  <nav class="flex justify-center items-center px-8 py-4 relative w-full">
+    <span class="space-x-6 md:space-x-0 absolute left-0 ml-6 flex items-center">
       <button class="md:hidden">{% render 'menu-icon' %}</button>
-      <button>{% render 'search-icon' %}</button>
+      <button class="relative hover:button-animation">{% render 'search-icon' %}</button>
     </span>
-    <span class="text-xl font-bold">{{ shop.name }}</span>
-    <span class="space-x-6">
-      <button>{% render 'user-icon' %}</button>
-      <button>{% render 'cart-icon' %}</button>
+    <a href="/" class="text-xl font-bold">{{ shop.name }}</a>
+    <span class="space-x-6 absolute right-0 mr-6 flex items-center">
+        {% if shop.customer_accounts_enabled %}
+            <button class="relative hover:button-animation" @click="toggleAccountModal">
+                {% render 'user-icon' %}
+            </button>
+            <div 
+                class="opacity-0 absolute top-8 right-8 min-w-max flex flex-col px-4 py-2 border border-gray-300 bg-white"
+                :class="{ 'opacity-100': isAccountVisible }"
+                v-if="isAccountVisible"
+            >
+            {% if customer %}
+                <a 
+                    href="/account"
+                    class="text-gray-400 hover:text-gray-700 transition-all block"
+                >
+                    Account
+                </a>
+                <a 
+                    href="/account/logout"
+                    class="text-gray-400 hover:text-gray-700 transition-all block"
+                >
+                    Logout
+                </a>
+            {% else %}
+                <a 
+                    href="/account/login"
+                    class="text-gray-400 hover:text-gray-700 transition-all block"
+                >
+                    Login
+                </a>
+                <a 
+                    href="/account/register"
+                    class="text-gray-400 hover:text-gray-700 transition-all block"
+                >
+                    Register
+                </a>
+            {% endif %}
+            </div>
+        {% endif %}
+      <button class="relative hover:button-animation">{% render 'cart-icon' %}</button>
     </span>
   </nav>
   <nav class="mt-2 px-6 w-5/6 hidden md:flex justify-center mx-auto border-t border-b border-gray-300">
@@ -16,8 +53,9 @@
               {% if link.links != blank %}
                   <li class="relative group transition-all cursor-pointer list-none h-full flex">
                       <button class="flex items-center">
-                          <span class="mr-1">{{ link.title }}</span>
-                          {% render 'caret-icon' %}
+                          <span class="mr-1 font-medium text-gray-500 group-hover:text-gray-700">
+                              {{ link.title | upcase }}
+                          </span>
                       </button>
                       <span 
                         class="hidden group-hover:flex absolute" 
@@ -33,14 +71,52 @@
                       </span>
                   </li>
               {% else %}
-                  <li class="list-none py-2">
-                      <a href="{{ link.url }}">{{ link.title }}</a>
+                  <li class="list-none py-2 font-medium text-gray-500 hover:text-gray-700">
+                      <a href="{{ link.url }}">{{ link.title | upcase }}</a>
                   </li>
               {% endif %} 
           {% endfor %}
         </ul>
   </nav>
+  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible" @click="closeAllModals" style="z-index: -10;"></div>
 </header>
+
+<script>
+store.onReady(() => {
+    const header = document.getElementById('header');
+    const Header = Vue.createApp({
+        data() {
+            return {
+
+            }
+        },
+        created() {
+            console.log('Header created!');
+        },
+        computed: {
+            isAccountVisible() {
+                return store.vue.state.account.visible;
+            }
+        },  
+        methods: {
+            toggleAccountModal() {
+                store.vue.toggleAccountModal();
+            },
+            closeAllModals() {
+                store.vue.closeAll();
+            }
+        }
+    }).mount(header);
+});
+</script>
+
+<style scoped>
+    .cart-button:hover .cart-count {
+    transform: translateY(-16px);
+    opacity: 1;
+  }
+
+</style>
 
 {% schema %}
 {
