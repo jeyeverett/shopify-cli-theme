@@ -1,0 +1,119 @@
+<nav
+  class="
+    opacity-0
+    absolute
+    left-8
+    top-8
+    w-40
+    h-80
+    flex flex-col
+    px-4
+    py-2
+    border border-gray-300
+    bg-white
+    z-10
+    shadow
+  "
+  v-show="isMobileVisible"
+  :class="{ 'opacity-100': isMobileVisible }"
+>
+  <div
+    class="
+      w-full
+      flex
+      justify-between
+      items-center
+      pb-2
+      mb-2
+      border-b border-gray-300
+    "
+  >
+    <h4 class="text-gray-500 tracking-wider">
+      {{ section.settings.mobile_menu_heading | upcase }}
+    </h4>
+    <button @click="closeAllModals">
+      {% render 'close-icon' %}
+    </button>
+  </div>
+  <ul class="flex flex-col text-sm" id="mobile-nav-list">
+    {% for link in section.settings.menu.links %} 
+      {% if link.links != blank %}
+        <li
+          class="
+            list-none
+            py-2
+            font-medium
+            text-gray-500
+            hover:text-gray-700
+            tracking-wider
+            relative
+            flex
+            justify-between
+            items-center
+          "
+          id="{{ link.title | downcase | replace: ' ', '-' }}"
+          @click="toggleNestedLinks"
+        >
+          {{ link.title | upcase }}
+          <span ref="{{ link.title | downcase | replace: ' ', '-' }}-caret-up">
+            {% render 'caret-up-icon' %}
+          </span>
+          <span class="hidden" ref="{{ link.title | downcase | replace: ' ', '-' }}-caret-down">
+            {% render 'caret-down-icon' %}
+          </span>
+          <ul
+            class="
+              flex flex-col
+              absolute
+              top-8
+              border border-gray-300
+              px-6
+              py-2
+              text-gray-500
+              hover:text-gray-700
+              tracking-wider
+              bg-white
+              min-w-max
+              hidden
+              z-20
+              shadow
+            "
+            ref="{{ link.title | downcase | replace: ' ', '-' }}"
+          >
+            {% for childLink in link.links %}
+              <li
+                class="
+                  px-2
+                  py-1
+                  border border-transparent
+                  rounded-sm
+                  list-none
+                  text-gray-500
+                  hover:text-gray-700 hover:bg-gray-300
+                  transition-all
+                  tracking-wide
+                  text-xs
+                "
+              >
+                <a href="{{ childLink.url }}">{{ childLink.title }}</a>
+              </li>
+              {% endfor %}
+          </ul>
+        </li>
+        {% else %}
+        <li
+          class="
+            list-none
+            py-2
+            font-medium
+            text-gray-500
+            hover:text-gray-700
+            tracking-wider
+          "
+        >
+          <a href="{{ link.url }}">{{ link.title | upcase }}</a>
+        </li>
+      {% endif %} 
+    {% endfor %}
+  </ul>
+</nav>

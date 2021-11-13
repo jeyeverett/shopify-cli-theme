@@ -1,0 +1,32 @@
+<div
+  class="absolute top-10 xs:top-4 left-0 flex items-center"
+>
+  <button
+    class="xs:hidden ml-6 relative hover:button-animation"
+    @click="toggleMobileModal"
+  >
+    {% render 'menu-icon' %}
+  </button>
+  <transition name="mobile-modal">
+    {% render 'mobile-modal' %}
+  </transition>
+  <button class="relative hover:button-animation ml-6">
+    {% render 'search-icon' %}
+  </button>
+</div>
+<div class="absolute right-0 top-10 xs:top-4 mr-6 flex items-center">
+  {% if shop.customer_accounts_enabled %}
+    <button
+      class="relative hover:button-animation mr-6"
+      @click="toggleAccountModal"
+    >
+      {% render 'user-icon' %}
+    </button>
+    <transition name="account-modal">
+      {% render 'account-modal' %}
+    </transition>
+  {% endif %}
+  <button class="relative hover:button-animation">
+    {% render 'cart-icon' %}
+  </button>
+</div>

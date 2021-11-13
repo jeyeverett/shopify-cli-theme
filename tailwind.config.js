@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   purge: {
     enabled: true,
@@ -6,6 +8,10 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
+    screens: {
+      xs: "480px",
+      ...defaultTheme.screens,
+    },
   },
   variants: {
     extend: {

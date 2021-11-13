@@ -1,1 +1,4 @@
 sections/header.liquid
+snippets/feature-nav.liquid
+snippets/site-nav.liquid
+snippets/mobile-modal.liquid
