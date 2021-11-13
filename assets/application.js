@@ -2,12 +2,7 @@
 
 const store = {
   vue: {},
-  isReady: "false",
-  get ready() {
-    return this.isReady;
-  },
-  set ready(val) {
-    this.isReady = val;
+  ready() {
     this.readyListeners.forEach((func) => func());
   },
   readyListeners: [],
@@ -25,17 +20,26 @@ document.getElementById("vue").onload = () => {
       account: {
         visible: false,
       },
+      mobile: {
+        visible: false,
+      },
     },
+
     toggleCartModal() {
       this.state.cart.visible = !this.state.cart.visible;
     },
     toggleAccountModal() {
       this.state.account.visible = !this.state.account.visible;
     },
+    toggleMobileModal() {
+      this.state.mobile.visible = !this.state.mobile.visible;
+    },
     closeAll() {
       this.state.account.visible = false;
       this.state.cart.visible = false;
+      this.state.mobile.visible = false;
     },
   });
-  store.ready = true;
+
+  store.ready();
 };

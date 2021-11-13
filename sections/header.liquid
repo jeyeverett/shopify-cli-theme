@@ -1,54 +1,77 @@
 <header class="relative bg-white" id="header">
-  <nav class="flex justify-center items-center px-8 py-4 relative w-full">
-    <span class="space-x-6 md:space-x-0 absolute left-0 ml-6 flex items-center">
-      <button class="md:hidden">{% render 'menu-icon' %}</button>
+  <nav class="flex justify-center items-center px-8 py-2 sm:py-4 w-full">
+    <div class="md:space-x-0 absolute top-10 sm:top-auto left-0 ml-6 flex items-center">
+      <button class="md:hidden mr-6 relative hover:button-animation" @click="toggleMobileModal">
+          {% render 'menu-icon' %}
+      </button>
+        <transition name="mobile-modal">
+            <nav 
+                class="opacity-0 absolute left-8 top-8 w-40 h-80 flex flex-col px-4 py-2 border border-gray-300 bg-white z-10 shadow" 
+                v-show="isMobileVisible" 
+                :class="{ 'opacity-100': isMobileVisible }"
+            >
+                <div class="w-full flex justify-between items-center pb-2 mb-2 border-b border-gray-300">
+                    <h4 class="text-gray-500 tracking-wider">
+                        {{ section.settings.mobile_menu_heading | upcase }}
+                    </h4>
+                    <button @click="closeAllModals">
+                        {% render 'close-icon' %}
+                    </button>
+                </div>
+                <ul class="flex flex-col text-sm">
+                    {% for link in section.settings.menu.links %}
+                        {% if link.links != blank %}
+                            
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+        </transition>
       <button class="relative hover:button-animation">{% render 'search-icon' %}</button>
-    </span>
-    <a href="/" class="text-xl font-bold">{{ shop.name }}</a>
-    <span class="space-x-6 absolute right-0 mr-6 flex items-center">
+    </div>
+    <a href="/" class="text-lg sm:text-xl font-bold text-gray-500">{{ shop.name }}</a>
+    <div class="absolute right-0 top-10 sm:top-auto mr-6 flex items-center">
         {% if shop.customer_accounts_enabled %}
-            <button class="relative hover:button-animation" @click="toggleAccountModal">
+            <button class="relative hover:button-animation mr-6" @click="toggleAccountModal">
                 {% render 'user-icon' %}
             </button>
-            <div 
-                class="opacity-0 absolute top-8 right-8 min-w-max flex flex-col px-4 py-2 border border-gray-300 bg-white"
-                :class="{ 'opacity-100': isAccountVisible }"
-                v-if="isAccountVisible"
-            >
-            {% if customer %}
-                <a 
-                    href="/account"
-                    class="text-gray-400 hover:text-gray-700 transition-all block"
+            <transition name="account-modal">
+                <div 
+                    class="opacity-0 absolute top-8 right-8 min-w-max flex flex-col px-4 py-2 border border-gray-300 bg-white shadow z-10"
+                    :class="{ 'opacity-100': isAccountVisible }"
+                    v-show="isAccountVisible"
                 >
-                    Account
-                </a>
-                {{ 'Logout' | customer_logout_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
-            {% else %}
-                {{ 'Login' | customer_login_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
-                {{ 'Register' | customer_register_link | replace: '<a', '<a class="text-gray-400 hover:text-gray-700 transition-all block"'}}
-            {% endif %}
-            </div>
+                    {% if customer %}
+                        <a 
+                            href="/account"
+                            class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"
+                        >
+                            Account
+                        </a>
+                        {{ 'Logout' | customer_logout_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
+                    {% else %}
+                        {{ 'Login' | customer_login_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
+                        {{ 'Register' | customer_register_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
+                    {% endif %}
+                </div>
+            </transition>
         {% endif %}
       <button class="relative hover:button-animation">{% render 'cart-icon' %}</button>
-    </span>
+    </div>
   </nav>
   <nav class="mt-2 px-6 w-5/6 hidden md:flex justify-center mx-auto border-t border-b border-gray-300">
-      <ul class="space-x-6 flex items-center">
+      <ul class="space-x-6 flex items-center text-sm">
           {% for link in section.settings.menu.links %}
               {% if link.links != blank %}
                   <li class="relative group transition-all cursor-pointer list-none h-full flex">
-                      <button class="flex items-center">
-                          <span class="mr-1 font-medium text-gray-500 group-hover:text-gray-700">
-                              {{ link.title | upcase }}
-                          </span>
-                      </button>
-                      <span 
-                        class="hidden group-hover:flex absolute" 
-                        style="top: 40.5px"
-                      >
-                          <ul class="flex flex-col absolute border border-gray-300 px-6 py-2 bg-white min-w-max">
+                      <span class="flex items-center font-medium text-gray-500 group-hover:text-gray-700 tracking-wider">
+                          {{ link.title | upcase }}
+                      </span>
+                      <span class="hidden absolute group-hover:nested-animation">
+                          <ul class="flex flex-col absolute border border-gray-300 px-6 py-2 bg-white min-w-max relative">
+                              <!-- <span class="absolute left-2 top-1">{% render 'caret-icon' %}</span> -->
                               {% for childLink in link.links %}
-                                  <li class="list-none text-gray-400 hover:text-gray-700 transition-all block">
+                                  <li class="px-2 py-1 border border-transparent rounded-sm list-none text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide">
                                       <a href="{{ childLink.url }}">{{ childLink.title }}</a>
                                   </li>
                               {% endfor %}
@@ -56,14 +79,14 @@
                       </span>
                   </li>
               {% else %}
-                  <li class="list-none py-2 font-medium text-gray-500 hover:text-gray-700">
+                  <li class="list-none py-2 font-medium text-gray-500 hover:text-gray-700 tracking-wider">
                       <a href="{{ link.url }}">{{ link.title | upcase }}</a>
                   </li>
               {% endif %} 
           {% endfor %}
         </ul>
   </nav>
-  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible" @click="closeAllModals" style="z-index: -10;"></div>
+  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible || isMobileVisible" @click="closeAllModals" style="z-index: -10;"></div>
 </header>
 
 <script>
@@ -81,18 +104,21 @@ store.onReady(() => {
         created() {
             console.log('Header created!');
         },
-        updated() {
-            console.log('updated');
-        },
         computed: {
             isAccountVisible() {
                 return store.vue.state.account.visible;
+            },
+            isMobileVisible() {
+                return store.vue.state.mobile.visible;
             }
         },  
         methods: {
             toggleAccountModal() {
-                console.log('toggling');
                 store.vue.toggleAccountModal();
+            },
+            toggleMobileModal() {
+                console.log('toggling');
+                store.vue.toggleMobileModal();
             },
             closeAllModals() {
                 store.vue.closeAll();
@@ -108,6 +134,43 @@ store.onReady(() => {
     opacity: 1;
   }
 
+  .account-modal-enter-active {
+    animation: animate-modal-right .2s forwards;
+  }
+
+  .account-modal-leave-active {
+    animation: animate-modal-right .2s reverse;
+  }
+
+  .mobile-modal-enter-active {
+    animation: animate-modal-left .2s forwards;
+  }
+
+  .mobile-modal-leave-active {
+    animation: animate-modal-left .2s reverse;
+  }
+
+  @keyframes animate-modal-right {
+    from {
+      right: 0;
+      opacity: 0;
+    }
+    to {
+      right: 2rem;
+      opacity: 1;
+    }
+  }
+
+  @keyframes animate-modal-left {
+    from {
+      left: 0;
+      opacity: 0;
+    }
+    to {
+      left: 2rem;
+      opacity: 1;
+    }
+  }
 </style>
 
 {% schema %}
@@ -115,10 +178,16 @@ store.onReady(() => {
     "name": "Header",
     "settings": [
         {
+            "type": "text",
+            "id": "mobile_menu_heading",
+            "default": "Menu",
+            "label": "Mobile Menu Heading"
+        },
+        {
             "type": "link_list",
             "id": "menu",
             "default": "main-menu",
-            "label": "Heading Navigation Menu"
+            "label": "Main Navigation Menu"
         }
     ]
 }
