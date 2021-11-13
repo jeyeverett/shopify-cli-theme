@@ -10,7 +10,7 @@
   <transition name="mobile-modal">
     {% render 'mobile-modal' %}
   </transition>
-  <button class="relative hover:button-animation ml-6">
+  <button class="relative hover:button-animation ml-6" @click="toggleSearchModal">
     {% render 'search-icon' %}
   </button>
 </div>

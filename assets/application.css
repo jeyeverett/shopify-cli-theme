@@ -790,6 +790,13 @@ video {
   cursor: pointer;
 }
 
+.select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .list-none {
   list-style-type: none;
 }
@@ -882,10 +889,6 @@ video {
 
 .pb-2 {
   padding-bottom: 0.5rem;
-}
-
-.text-center {
-  text-align: center;
 }
 
 .text-xs {

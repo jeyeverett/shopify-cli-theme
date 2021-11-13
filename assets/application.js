@@ -23,6 +23,12 @@ document.getElementById("vue").onload = () => {
       mobile: {
         visible: false,
       },
+      search: {
+        visible: false,
+        element() {
+          return document.getElementById("search-modal");
+        },
+      },
     },
 
     toggleCartModal() {
@@ -33,6 +39,10 @@ document.getElementById("vue").onload = () => {
     },
     toggleMobileModal() {
       this.state.mobile.visible = !this.state.mobile.visible;
+    },
+    toggleSearchModal(target) {
+      this.state.search.visible = !this.state.search.visible;
+      return this.state.search.visible;
     },
     closeAll() {
       this.state.account.visible = false;

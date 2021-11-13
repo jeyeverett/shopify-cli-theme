@@ -2,12 +2,25 @@
   <nav class="flex w-full">
     {% render 'feature-nav' %}
   </nav>
-  <a href="/" class="mt-2 xs:mt-4 block text-center text-lg xs:text-xl font-bold text-gray-500">
+  <a href="/" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
     {{ shop.name }}
   </a>
-  <nav class="mt-8 px-6 w-5/6 hidden xs:flex justify-center mx-auto border-t border-b border-gray-300" id="site-nav">
-    {% render 'site-nav' %}
-  </nav>
+  <transition name="banner" mode="out-in" @after-enter="focusSearch">
+    <nav 
+      class="mt-8 px-6 w-5/6 hidden xs:flex justify-center mx-auto border-t border-b border-gray-300 shadow"
+      v-if="!isSearchVisible"
+    >
+      {% render 'site-nav' %}
+    </nav>
+    <nav
+      class="opacity-0 mt-8 px-6 w-5/6 xs:flex justify-center mx-auto"
+      :class="{ 'opacity-100': isSearchVisible }"
+      id="search-modal"
+      v-else
+    >
+      <input class="w-full border border-gray-300 px-4 shadow text-gray-500" style="height: 38px;" type="text" placeholder="type your search here..." v-model="search">
+    </nav>
+  </transition>
   <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible || isMobileVisible" @click="closeAllModals" style="z-index: -10;"></div>
 </header>
 
@@ -16,8 +29,11 @@ store.onReady(() => {
     console.log('vue app loading');
     const header = document.getElementById('header');
     const Header = Vue.createApp({
-        created() {
-        },
+      data() {
+        return {
+          search: ''
+        }
+      },
         computed: {
             isAccountVisible() {
               return store.vue.state.account.visible;
@@ -25,14 +41,19 @@ store.onReady(() => {
             isMobileVisible() {
               return store.vue.state.mobile.visible;
             },
+            isSearchVisible() {
+              return store.vue.state.search.visible;
+            },
         },  
         methods: {
             toggleAccountModal() {
               store.vue.toggleAccountModal();
             },
             toggleMobileModal() {
-              console.log('toggling');
               store.vue.toggleMobileModal();
+            },
+            toggleSearchModal() {
+              store.vue.toggleSearchModal();
             },
             toggleNestedLinks(event) {
                 this.$refs[event.target.id].classList.toggle('hidden');
@@ -40,6 +61,13 @@ store.onReady(() => {
                 this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
                 this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
                 this.closeAllNested(event.target.id);
+            },
+            focusSearch() {
+              const searchModal = document.getElementById('search-modal');
+              if (searchModal) {
+                const search = searchModal.firstChild;
+                search.focus();
+              }
             },
             closeAllNested(currentNest = null) {
               const nested = Object.keys(this.$refs);
@@ -56,6 +84,11 @@ store.onReady(() => {
               store.vue.closeAll();
               this.closeAllNested();
             }
+        },
+        watch: {
+          search(val, val1) {
+            console.log(val, val1);
+          }
         }
     }).mount(header);
 });
@@ -83,6 +116,14 @@ store.onReady(() => {
     animation: animate-modal-left .2s reverse;
   }
 
+  .banner-enter-active {
+    animation: animate-modal-top .2s forwards;
+  }
+
+  .banner-leave-active {
+    animation: animate-modal-top .2s reverse;
+  }
+
   .nested-link-animation-in {
     animation: animate-modal-left .2s forwards;
   }
@@ -105,6 +146,17 @@ store.onReady(() => {
     }
     to {
       left: 2rem;
+      opacity: 1;
+    }
+  }
+
+  @keyframes animate-modal-top {
+    from {
+      transform: translateY(-2rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
       opacity: 1;
     }
   }

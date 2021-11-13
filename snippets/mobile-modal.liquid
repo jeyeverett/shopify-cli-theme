@@ -50,6 +50,8 @@
             flex
             justify-between
             items-center
+            cursor-pointer
+            select-none
           "
           id="{{ link.title | downcase | replace: ' ', '-' }}"
           @click="toggleNestedLinks"
@@ -77,6 +79,7 @@
               hidden
               z-20
               shadow
+              select-none
             "
             ref="{{ link.title | downcase | replace: ' ', '-' }}"
           >
