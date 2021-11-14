@@ -1,0 +1,59 @@
+<div class="section flex flex-col items-center justify-center mt-16 md:mt-28 lg:mt-40">
+    {% if section.settings.image %}
+        <img 
+            class="h-40 w-40 mb-5"
+            height="160"
+            width="160"
+            loading="lazy"
+            src="{{ section.settings.image | img_url: 'master' }}" 
+            alt="{{ section.settings.title }}" 
+        />
+    {% endif %}
+    <h1 class="text-8xl font-semibold text-center mb-3">{{ section.settings.title }}</h1>
+    <p class="w-1/2 text-center">{{ section.settings.subtext }}</p>
+    {% if section.settings.link_url %}
+        {% assign shop_url = section.settings.link_url %}
+    {% else %}
+        {% assign shop_url = shop.secure_url %}
+    {% endif %}
+    <a href="{{ shop_url }}" class="px-2 py-1 border border-gray-300 mt-5">
+        {{ section.settings.link_text }}
+    </a>
+</div>
+
+{% schema %}
+{
+    "name": "Template 404",
+    "tag": "section",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "default": "404",
+            "label": "404 Page Heading"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "404 Page Image"
+        },
+        {
+            "type": "text",
+            "id": "subtext",
+            "default": "The page you are looking for does not exist.",
+            "label": "404 Page Subtext"
+        },
+        {
+            "type": "text",
+            "id": "link_text",
+            "default": "Back to home",
+            "label": "404 Page Link Text"
+        },
+        {
+            "type": "url",
+            "id": "link_url",
+            "label": "404 Page Link URL"
+        }
+    ]
+}
+{% endschema %}

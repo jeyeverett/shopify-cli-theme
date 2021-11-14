@@ -1,0 +1,9 @@
+{
+  "name": "JSON Template 404",
+  "sections": {
+    "json-template": {
+      "type": "template-404"
+    }
+  },
+  "order": ["json-template"]
+}
