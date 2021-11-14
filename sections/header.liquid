@@ -13,8 +13,8 @@
       {% render 'site-nav' %}
     </nav>
     <nav
-      class="opacity-0 mt-8 px-6 w-5/6 xs:flex justify-center mx-auto"
-      :class="{ 'opacity-100': isSearchVisible }"
+      class="hide-element mt-8 px-6 w-5/6 xs:flex justify-center mx-auto"
+      :class="{ 'show-element': isSearchVisible }"
       id="search-modal"
       v-else
     >
@@ -95,8 +95,13 @@ store.onReady(() => {
 </script>
 
 <style scoped>
-    .cart-button:hover .cart-count {
-    transform: translateY(-16px);
+  .hide-element {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .show-element {
+    position: static;
     opacity: 1;
   }
 
