@@ -2,18 +2,36 @@
 
 const store = {
   vue: {},
-  ready() {
-    this.readyListeners.forEach((func) => func());
+  ready(state) {
+    this.readyListeners.forEach((func) => func(state));
   },
   readyListeners: [],
   onReady: function (callback) {
     this.readyListeners.push(callback);
   },
+  loadState() {
+    const state = window.sessionStorage.getItem("shopify-store");
+    if (state === "undefined" || state === "{}") {
+      window.sessionStorage.removeItem("shopify-store");
+      return false;
+    } else {
+      return JSON.parse(state);
+    }
+  },
+  saveState() {
+    window.sessionStorage.setItem(
+      "shopify-store",
+      JSON.stringify(this.vue["state"])
+    );
+  },
 };
 
 document.getElementById("vue").onload = () => {
-  store.vue = Vue.reactive({
-    state: {
+  const state = store.loadState();
+  let initialState;
+
+  if (!state) {
+    initialState = {
       cart: {
         visible: false,
       },
@@ -25,11 +43,13 @@ document.getElementById("vue").onload = () => {
       },
       search: {
         visible: false,
-        element() {
-          return document.getElementById("search-modal");
-        },
+        input: "",
       },
-    },
+    };
+  }
+
+  store.vue = Vue.reactive({
+    state: state ? state : initialState,
 
     toggleCartModal() {
       this.state.cart.visible = !this.state.cart.visible;
@@ -40,16 +60,20 @@ document.getElementById("vue").onload = () => {
     toggleMobileModal() {
       this.state.mobile.visible = !this.state.mobile.visible;
     },
-    toggleSearchModal(target) {
+    toggleSearchModal() {
       this.state.search.visible = !this.state.search.visible;
-      return this.state.search.visible;
     },
     closeAll() {
       this.state.account.visible = false;
       this.state.cart.visible = false;
       this.state.mobile.visible = false;
+      this.state.search.visible = false;
     },
   });
 
-  store.ready();
+  store.ready(state || initialState);
+};
+
+window.onbeforeunload = () => {
+  store.saveState();
 };

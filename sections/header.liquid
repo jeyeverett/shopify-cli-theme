@@ -2,31 +2,30 @@
   <nav class="flex w-full">
     {% render 'feature-nav' %}
   </nav>
-  <a href="/" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
+  <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
     {{ shop.name }}
   </a>
   <transition name="banner" mode="out-in" @after-enter="focusSearch">
     <nav 
-      class="mt-8 px-6 w-5/6 hidden xs:flex justify-center mx-auto border-t border-b border-gray-300 shadow"
+      class="mt-8 px-6 w-5/6 invisible xs:visible flex justify-center mx-auto border-t border-b border-gray-300 shadow"
       v-if="!isSearchVisible"
     >
       {% render 'site-nav' %}
     </nav>
     <nav
-      class="hide-element mt-8 px-6 w-5/6 xs:flex justify-center mx-auto"
+      class="hide-element mt-8 px-6 w-5/6 xs:flex justify-center mx-auto relative"
       :class="{ 'show-element': isSearchVisible }"
       id="search-modal"
       v-else
     >
-      <input class="w-full border border-gray-300 px-4 shadow text-gray-500" style="height: 38px;" type="text" placeholder="type your search here..." v-model="search">
+      <input class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" style="height: 38px;" type="text" placeholder="type your search here..." @input="onSearch" v-model="search">
     </nav>
   </transition>
-  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible || isMobileVisible" @click="closeAllModals" style="z-index: -10;"></div>
+  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible || isMobileVisible || isSearchVisible" @click="closeAllModals"></div>
 </header>
 
 <script>
-store.onReady(() => {
-    console.log('vue app loading');
+store.onReady(({ search }) => {
     const header = document.getElementById('header');
     const Header = Vue.createApp({
       data() {
@@ -34,62 +33,65 @@ store.onReady(() => {
           search: ''
         }
       },
-        computed: {
-            isAccountVisible() {
-              return store.vue.state.account.visible;
-            },
-            isMobileVisible() {
-              return store.vue.state.mobile.visible;
-            },
-            isSearchVisible() {
-              return store.vue.state.search.visible;
-            },
-        },  
-        methods: {
-            toggleAccountModal() {
-              store.vue.toggleAccountModal();
-            },
-            toggleMobileModal() {
-              store.vue.toggleMobileModal();
-            },
-            toggleSearchModal() {
-              store.vue.toggleSearchModal();
-            },
-            toggleNestedLinks(event) {
-                this.$refs[event.target.id].classList.toggle('hidden');
-                this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
-                this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
-                this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
-                this.closeAllNested(event.target.id);
-            },
-            focusSearch() {
-              const searchModal = document.getElementById('search-modal');
-              if (searchModal) {
-                const search = searchModal.firstChild;
-                search.focus();
-              }
-            },
-            closeAllNested(currentNest = null) {
-              const nested = Object.keys(this.$refs);
-              nested.forEach(nest => {
-                if (!nest.includes('caret') && nest !== currentNest) {
-                  this.$refs[nest].classList.add('hidden');
-                  this.$refs[nest].classList.remove('nested-link-animation-in');
-                  this.$refs[nest + "-caret-down"].classList.add('hidden');
-                  this.$refs[nest + "-caret-up"].classList.remove('hidden');
-                }
-              })
-            },
-            closeAllModals() {
-              store.vue.closeAll();
-              this.closeAllNested();
+      created() {
+        this.search = search.input;
+      },
+      computed: {
+          isAccountVisible() {
+            return store.vue.state.account.visible;
+          },
+          isMobileVisible() {
+            return store.vue.state.mobile.visible;
+          },
+          isSearchVisible() {
+            return store.vue.state.search.visible;
+          },
+      },  
+      methods: {
+          toggleAccountModal() {
+            store.vue.toggleAccountModal();
+          },
+          toggleMobileModal() {
+            store.vue.toggleMobileModal();
+          },
+          toggleSearchModal() {
+            store.vue.toggleSearchModal();
+          },
+          toggleNestedLinks(event) {
+            console.log(this.$refs)
+              this.$refs[event.target.id].classList.toggle('hidden');
+              this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
+              this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
+              this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
+              this.closeAllNested(event.target.id);
+          },
+          focusSearch() {
+            const searchModal = document.getElementById('search-modal');
+            if (searchModal) {
+              const search = searchModal.firstChild;
+              search.focus();
             }
-        },
-        watch: {
-          search(val, val1) {
-            console.log(val, val1);
+          },
+          onSearch() {
+            store.vue.state.search.input = this.search;
+          },
+          closeAllNested(currentNest = null) {
+            const nested = Object.keys(this.$refs);
+            nested.forEach(nest => {
+              //nested links are generated dynamically by liquid
+              if (!nest.includes('caret') && nest !== currentNest) {
+                this.$refs[nest].classList.add('hidden');
+                this.$refs[nest].classList.remove('nested-link-animation-in');
+                this.$refs[nest + "-caret-down"].classList.add('hidden');
+                this.$refs[nest + "-caret-up"].classList.remove('hidden');
+              }
+            })
+          },
+          closeAllModals() {
+            store.vue.closeAll();
+            this.closeAllNested();
           }
-        }
+      },
     }).mount(header);
 });
 </script>

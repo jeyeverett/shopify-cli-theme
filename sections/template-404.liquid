@@ -9,14 +9,14 @@
             alt="{{ section.settings.title }}" 
         />
     {% endif %}
-    <h1 class="text-8xl font-semibold text-center mb-3">{{ section.settings.title }}</h1>
+    <h1 class="text-8xl font-semibold text-center mb-3 text-gray-500">{{ section.settings.title }}</h1>
     <p class="w-1/2 text-center">{{ section.settings.subtext }}</p>
     {% if section.settings.link_url %}
         {% assign shop_url = section.settings.link_url %}
     {% else %}
         {% assign shop_url = shop.secure_url %}
     {% endif %}
-    <a href="{{ shop_url }}" class="px-2 py-1 border border-gray-300 mt-5">
+    <a href="{{ shop_url }}" class="px-4 py-2 text-white bg-gray-500 border border-gray-500 hover:text-gray-500 hover:bg-white transition-colors mt-5">
         {{ section.settings.link_text }}
     </a>
 </div>
