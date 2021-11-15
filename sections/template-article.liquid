@@ -1,29 +1,41 @@
-<article>
+<article class="px-6 py-4 sm:py-8 sm:px-12 flex flex-col items-center justify-center">
   {% for block in section.blocks %}
     {% case block.type %}
       {% when 'article_title' %}
-        <h1>{{ article.title }}</h1>
+        <span>
+          <a href="{{  }}" class="font-medium text-gray-500 tracking-wider hover:text-gray-800 transition-all">
+            {{ blog.title | upcase }}
+          </a>
+          <h1 class="text-gray-700 text-2xl lg:text-3xl xl:text-4xl mb-4">{{ article.title }}</h1>
+        </span>
       {% when 'article_author' %}
-        {% if section.settings.enable_author %}
-          <small>
-            {{ article.author }}
-          </small>
-        {% endif %}
-      {% when 'article_published_date' %}
-        {% if section.settings.enable_published_date %}
-          <small>
-            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
-              {{ article.published_at | date: "%Y-%m-%d" }}
-            </time>
+        {% if section.settings.enable_author or section.settings.enable_published_date %}
+          <small class="text-gray-500">
+            {% if section.settings.enable_author %}
+              <span>{{ article.author }}</span>
+            {% endif %}
+            {% if section.settings.enable_published_date %}
+              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                {{ article.published_at | date: format: 'on_date'}}
+              </time>
+            {% endif %}
           </small>
         {% endif %}
       {% when 'article_featured_image' %}
-        <img
-          src="{{ article.image | img_url: 'large' }}"
-          alt="{{ article.image.alt }}"
-        />
+        <figure class="my-4 ">
+          {% if article.image != blank %}
+            <img
+              class="w-full h-60 sm:h-80 md:h-96 object-cover object-center rounded-sm shadow"
+              src="{{ article.image | img_url: 'medium' }}"
+              alt="{{ article.image.alt }}"
+            />
+          {% else %}
+            {% assign placeholder_image = 'lifestyle-1' %}
+            {{ placeholder_image | placeholder_svg_tag: 'w-full h-60 sm:h-80 md:h-96 object-cover object-center' }}
+          {% endif %}
+        </figure>
       {% when 'article_content' %}
-        <div>{{ article.content }}</div>  
+        <div class="text-gray-700 w-full sm:w-3/4 xl:w-1/2 leading-relaxed sm:leading-loose">{{ article.content }}</div>  
       {% else %}
     {% endcase %}
   {% endfor %}
@@ -55,11 +67,6 @@
       {
         "type": "article_author",
         "name": "Author",
-        "limit": 1
-      },
-      {
-        "type": "article_published_date",
-        "name": "Published Date",
         "limit": 1
       },
       {

@@ -9,9 +9,6 @@
         "author": {
           "type": "article_author"
         },
-        "published_date": {
-          "type": "article_published_date"
-        },
         "featured_image": {
           "type": "article_featured_image"
         },
@@ -19,13 +16,7 @@
           "type": "article_content"
         }
       },
-      "block_order": [
-        "title",
-        "author",
-        "published_date",
-        "featured_image",
-        "content"
-      ]
+      "block_order": ["title", "author", "featured_image", "content"]
     }
   },
   "order": ["template"]
