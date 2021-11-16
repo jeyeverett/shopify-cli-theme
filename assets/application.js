@@ -2,12 +2,8 @@
 
 const store = {
   vue: {},
-  ready(state) {
-    this.readyListeners.forEach((func) => func(state));
-  },
-  readyListeners: [],
-  onReady: function (callback) {
-    this.readyListeners.push(callback);
+  initComponents(state) {
+    headerComponent(state);
   },
   loadState() {
     const state = window.sessionStorage.getItem("shopify-store");
@@ -71,7 +67,7 @@ document.getElementById("vue").onload = () => {
     },
   });
 
-  store.ready(state || initialState);
+  store.initComponents(state || initialState);
 };
 
 window.onbeforeunload = () => {

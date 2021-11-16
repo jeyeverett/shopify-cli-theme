@@ -3,7 +3,21 @@
     {% render 'feature-nav' %}
   </nav>
   <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
-    {{ shop.name }}
+    {% if section.settings.show_logo_image %}
+      {% if section.settings.logo_image %}
+        <img 
+          src="{{ section.settings.logo_image | img_url: 'master' }}" 
+          alt="{{ shop.name }}" 
+        />
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'w-full h-20 object-cover bg-gray-200' }}
+      {% endif %}
+    {% endif %}
+    {% if section.settings.show_logo_text %}
+      {{ section.settings.logo_text }}
+    {% else %}
+      {{ shop.name }}
+    {% endif %}
   </a>
   <transition name="banner" mode="out-in" @after-enter="focusSearch">
     <nav 
@@ -22,91 +36,88 @@
     </nav>
   </transition>
   <div 
-    class="hidden w-full h-full fixed top-0 left-0" 
-    :class="{ 'z-0': isModalOpen }"
-    :style="{ display: isModalOpen ? 'block' : 'none' }"
+    class="hide-backdrop" 
+    :class="{ 'show-backdrop': isModalOpen }"
     v-show="isModalOpen" 
     @click="closeAllModals">
   </div>
 </header>
 
 <script>
-store.onReady(({ search }) => {
-    const header = document.getElementById('header');
-    const Header = Vue.createApp({
-      data() {
-        return {
-          search: ''
+const headerComponent = (({ search }) => Vue.createApp({
+    data() {
+      return {
+        search: ''
+      }
+    },
+    created() {
+      this.search = search.input;
+    },
+    computed: {
+      isAccountVisible() {
+        return store.vue.state.account.visible;
+      },
+      isMobileVisible() {
+        return store.vue.state.mobile.visible;
+      },
+      isSearchVisible() {
+        return store.vue.state.search.visible;
+      },
+      isModalOpen() {
+        if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },  
+    methods: {
+      toggleAccountModal() {
+        console.log('toggling');
+        store.vue.toggleAccountModal();
+      },
+      toggleMobileModal() {
+        store.vue.toggleMobileModal();
+      },
+      toggleSearchModal() {
+        store.vue.toggleSearchModal();
+      },
+      toggleNestedLinks(event) {
+        console.log(this.$refs)
+          this.$refs[event.target.id].classList.toggle('hidden');
+          this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
+          this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
+          this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
+          this.closeAllNested(event.target.id);
+      },
+      focusSearch() {
+        const searchModal = document.getElementById('search-modal');
+        if (searchModal) {
+          const search = searchModal.firstChild;
+          search.focus();
         }
       },
-      created() {
-        this.search = search.input;
+      onSearch() {
+        store.vue.state.search.input = this.search;
       },
-      computed: {
-          isAccountVisible() {
-            return store.vue.state.account.visible;
-          },
-          isMobileVisible() {
-            return store.vue.state.mobile.visible;
-          },
-          isSearchVisible() {
-            return store.vue.state.search.visible;
-          },
-          isModalOpen() {
-            if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible) {
-              return true;
-            } else {
-              return false;
-            }
+      closeAllNested(currentNest = null) {
+        const nested = Object.keys(this.$refs);
+        nested.forEach(nest => {
+          //nested links are generated dynamically by liquid
+          if (!nest.includes('caret') && nest !== currentNest) {
+            this.$refs[nest].classList.add('hidden');
+            this.$refs[nest].classList.remove('nested-link-animation-in');
+            this.$refs[nest + "-caret-down"].classList.add('hidden');
+            this.$refs[nest + "-caret-up"].classList.remove('hidden');
           }
-      },  
-      methods: {
-          toggleAccountModal() {
-            store.vue.toggleAccountModal();
-          },
-          toggleMobileModal() {
-            store.vue.toggleMobileModal();
-          },
-          toggleSearchModal() {
-            store.vue.toggleSearchModal();
-          },
-          toggleNestedLinks(event) {
-            console.log(this.$refs)
-              this.$refs[event.target.id].classList.toggle('hidden');
-              this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
-              this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
-              this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
-              this.closeAllNested(event.target.id);
-          },
-          focusSearch() {
-            const searchModal = document.getElementById('search-modal');
-            if (searchModal) {
-              const search = searchModal.firstChild;
-              search.focus();
-            }
-          },
-          onSearch() {
-            store.vue.state.search.input = this.search;
-          },
-          closeAllNested(currentNest = null) {
-            const nested = Object.keys(this.$refs);
-            nested.forEach(nest => {
-              //nested links are generated dynamically by liquid
-              if (!nest.includes('caret') && nest !== currentNest) {
-                this.$refs[nest].classList.add('hidden');
-                this.$refs[nest].classList.remove('nested-link-animation-in');
-                this.$refs[nest + "-caret-down"].classList.add('hidden');
-                this.$refs[nest + "-caret-up"].classList.remove('hidden');
-              }
-            })
-          },
-          closeAllModals() {
-            store.vue.closeAll();
-            this.closeAllNested();
-          }
+        })
       },
-    }).mount(header);
-});
+      closeAllModals() {
+        store.vue.closeAll();
+        this.closeAllNested();
+      }
+    },
+  }).mount('#header'));
 </script>
 
 <style scoped>
@@ -117,6 +128,22 @@ store.onReady(({ search }) => {
 
   .show-element {
     position: static;
+    opacity: 1;
+  }
+
+  .hide-backdrop {
+    position: absolute;
+    height: 0;
+    width: 0;
+    opacity: 0;
+  }
+
+  .show-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     opacity: 1;
   }
 
@@ -197,6 +224,28 @@ store.onReady(({ search }) => {
             "id": "menu",
             "default": "main-menu",
             "label": "Main Navigation Menu"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_logo_image",
+          "default": true,
+          "label": "Show Logo Image"
+        },
+        {
+          "type": "text",
+          "id": "logo_text",
+          "label": "Logo Text"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_logo_text",
+          "default": true,
+          "label": "Show Logo Text"
         }
     ]
 }
