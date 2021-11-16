@@ -26,7 +26,7 @@
           {% if article.image != blank %}
             <img
               class="w-full h-60 sm:h-80 md:h-96 object-cover object-center rounded-sm shadow"
-              src="{{ article.image | img_url: 'medium' }}"
+              src="{{ article.image | img_url: 'master' }}"
               alt="{{ article.image.alt }}"
             />
           {% else %}
@@ -40,6 +40,100 @@
     {% endcase %}
   {% endfor %}
 </article>
+
+{% if blog.comments_enabled? and article.comments_enabled? %}
+  <section id="comments" class="px-4 py-2 sm:py-6 sm:px-10 flex flex-col items-center justify-center">
+    <h5 class="w-full sm:w-3/4 xl:w-1/2 text-gray-700 text-xl lg:text-2xl mb-4">Leave a comment</h5>
+
+    <!-- comment form submission success/error messages -->
+    <span class="w-full sm:w-3/4 xl:w-1/2">
+      {% if form.errors %}
+        <span class="mb-4 px-2 py-1 flex justify-center w-full text-red-700 border border-red-300 bg-red-200">
+          {% render 'error-icon' %}
+          <span class="ml-2">Failed to post your comment!</span>
+        </span>
+        <ul class="px-8 py-4">
+          {% for error in form.errors %}
+            <li class="text-red-700 py-1">
+              {{ form.errors.message[error] }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% elsif form.posted_successfully? %}
+        <span class="mb-4 px-2 py-1 flex justify-center w-full text-green-700 border border-green-300 bg-green-200">
+          {% render 'success-icon' %}
+          <span class="ml-2">Comment posted successfully!</span>
+        </span>
+      {% endif %}
+    </span>
+
+    {% if article.comments_count > 0 %}
+      {% paginate article.comments by 5 %}
+        {% for comment in article.comments %}
+          <article class="w-full sm:w-3/4 xl:w-1/2 px-6 py-3 border border-gray-300 rounded-sm shadow mb-4 last:mb-0">
+            <span class="text-sm text-gray-500">
+              {{ comment.author }} {{ comment.created_at | date: format: 'on_date' }}
+            </span>
+            {{ comment.content | replace: '<p', '<p class="my-2 px-2 text-gray-600"' }}
+          </article>
+        {% endfor %}
+        {% if paginate.pages > 1 %}
+          {{ paginate | default_pagination }}
+        {% endif %}
+      {% endpaginate %}
+    {% else %}
+      <span class="my-4 font-light text-gray-500">Be the first to comment on this article!</span>
+    {% endif %}
+  </section>
+  {% form 'new_comment', article %}
+    <div id="comment-form" class="mb-10 px-4 sm:px-10 flex flex-col items-center justify-center">
+      <div class="w-full sm:w-3/4 xl:w-1/2 flex flex-col pt-4 mt-4 border-t-4 border-gray-300">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-2">
+          <span class="my-1 sm:my-2">
+            <label for="comment_author" class="text-gray-500 uppercase tracking-wide font-medium text-sm">
+              Name
+            </label>
+            <input 
+              type="text" 
+              id="comment_author"
+              name="comment[author]" 
+              class="w-full border border-gray-300 py-1 px-2 shadow text-gray-500"
+              placeholder="Your Name"
+              required
+            >
+          </span>
+          <span class="my-1 sm:my-2">
+            <label for="comment_email" class="text-gray-500 uppercase tracking-wide font-medium text-sm">
+              Email
+            </label>
+            <input 
+              type="email" 
+              id="comment_email"
+              name="comment[email]" 
+              class="w-full border border-gray-300 py-1 px-2 shadow text-gray-500"
+              placeholder="Your Email"
+              required
+            >
+          </span>
+        </div>
+        <span class="my-1 sm:my-2">
+          <label for="comment_body" class="text-gray-500 uppercase tracking-wide font-medium text-sm">
+            Comment
+          </label>
+          <textarea 
+            type="text" 
+            id="comment_body"
+            name="comment[body]" 
+            class="w-full border h-40 border-gray-300 py-1 px-2 shadow text-gray-500 resize-none"
+            placeholder="Write your comment here..."
+            required
+          ></textarea>
+        </span>
+        <input type="submit" class="px-4 py-2 text-white bg-gray-500 border border-gray-500 shadow hover:text-gray-500 hover:bg-white transition-colors mt-5 cursor-pointer" value="Post comment" />
+      </div>
+    </div>
+  {% endform %} 
+{% endif %}
 
 {% schema %} 
 { 
