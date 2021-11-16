@@ -36,7 +36,6 @@
         </figure>
       {% when 'article_content' %}
         <div class="text-gray-700 w-full sm:w-3/4 xl:w-1/2 leading-relaxed sm:leading-loose">{{ article.content }}</div>  
-      {% else %}
     {% endcase %}
   {% endfor %}
 </article>
@@ -44,28 +43,6 @@
 {% if blog.comments_enabled? and article.comments_enabled? %}
   <section id="comments" class="px-4 py-2 sm:py-6 sm:px-10 flex flex-col items-center justify-center">
     <h5 class="w-full sm:w-3/4 xl:w-1/2 text-gray-700 text-xl lg:text-2xl mb-4">Leave a comment</h5>
-
-    <!-- comment form submission success/error messages -->
-    <span class="w-full sm:w-3/4 xl:w-1/2">
-      {% if form.errors %}
-        <span class="mb-4 px-2 py-1 flex justify-center w-full text-red-700 border border-red-300 bg-red-200">
-          {% render 'error-icon' %}
-          <span class="ml-2">Failed to post your comment!</span>
-        </span>
-        <ul class="px-8 py-4">
-          {% for error in form.errors %}
-            <li class="text-red-700 py-1">
-              {{ form.errors.message[error] }}
-            </li>
-          {% endfor %}
-        </ul>
-      {% elsif form.posted_successfully? %}
-        <span class="mb-4 px-2 py-1 flex justify-center w-full text-green-700 border border-green-300 bg-green-200">
-          {% render 'success-icon' %}
-          <span class="ml-2">Comment posted successfully!</span>
-        </span>
-      {% endif %}
-    </span>
 
     {% if article.comments_count > 0 %}
       {% paginate article.comments by 5 %}
@@ -87,6 +64,29 @@
   </section>
   {% form 'new_comment', article %}
     <div id="comment-form" class="mb-10 px-4 sm:px-10 flex flex-col items-center justify-center">
+      <!-- comment form submission success/error messages -->
+      <span class="w-full sm:w-3/4 xl:w-1/2">
+        {% if form.errors %}
+          <span class="mb-4 px-2 py-1 flex flex-col justify-center items-center w-full text-red-800 border border-red-300 bg-red-200">
+            <p class="flex">
+              {% render 'error-icon' %}
+              <span class="ml-2">Failed to post your comment!</span>
+            </p>
+            <ol>
+              {% for error in form.errors %}
+                <li class="text-red-800 py-2 list-decimal list-inside">
+                  {{ form.errors.translated_fields[error] | capitalize }} {{ form.errors.messages[error] }}
+                </li>
+              {% endfor %}
+            </ol>
+          </span>
+        {% elsif form.posted_successfully? %}
+          <span class="mb-4 px-2 py-1 flex justify-center w-full text-green-700 border border-green-300 bg-green-200">
+            {% render 'success-icon' %}
+            <p class="ml-2">Comment posted successfully!</p>
+          </span>
+        {% endif %}
+      </span>
       <div class="w-full sm:w-3/4 xl:w-1/2 flex flex-col pt-4 mt-4 border-t-4 border-gray-300">
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-2">
           <span class="my-1 sm:my-2">

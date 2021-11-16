@@ -21,7 +21,13 @@
       <input class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" style="height: 38px;" type="text" placeholder="type your search here..." @input="onSearch" v-model="search">
     </nav>
   </transition>
-  <div class="w-full h-full fixed top-0 left-0 z-0" v-show="isAccountVisible || isMobileVisible || isSearchVisible" @click="closeAllModals"></div>
+  <div 
+    class="hidden w-full h-full fixed top-0 left-0" 
+    :class="{ 'z-0': isAccountVisible || isMobileVisible || isSearchVisible }"
+    :style="{ display: (isAccountVisible || isMobileVisible || isSearchVisible) ? 'block' : 'none' }"
+    v-show="isAccountVisible || isMobileVisible || isSearchVisible" 
+    @click="closeAllModals">
+  </div>
 </header>
 
 <script>
