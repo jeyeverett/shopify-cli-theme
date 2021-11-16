@@ -23,9 +23,9 @@
   </transition>
   <div 
     class="hidden w-full h-full fixed top-0 left-0" 
-    :class="{ 'z-0': isAccountVisible || isMobileVisible || isSearchVisible }"
-    :style="{ display: (isAccountVisible || isMobileVisible || isSearchVisible) ? 'block' : 'none' }"
-    v-show="isAccountVisible || isMobileVisible || isSearchVisible" 
+    :class="{ 'z-0': isModalOpen }"
+    :style="{ display: isModalOpen ? 'block' : 'none' }"
+    v-show="isModalOpen" 
     @click="closeAllModals">
   </div>
 </header>
@@ -52,6 +52,13 @@ store.onReady(({ search }) => {
           isSearchVisible() {
             return store.vue.state.search.visible;
           },
+          isModalOpen() {
+            if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible) {
+              return true;
+            } else {
+              return false;
+            }
+          }
       },  
       methods: {
           toggleAccountModal() {

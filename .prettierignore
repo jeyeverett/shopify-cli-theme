@@ -1,6 +1,8 @@
 sections/header.liquid
 sections/template-404.liquid
 sections/template-article.liquid
+sections/template-blog.liquid
 snippets/feature-nav.liquid
 snippets/site-nav.liquid
 snippets/mobile-modal.liquid
+snippets/pagination.liquid
