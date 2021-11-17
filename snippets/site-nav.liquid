@@ -19,7 +19,8 @@
         <li
           class="relative group transition-all cursor-pointer list-none h-full flex"
         >
-          <span
+          <a
+            href="{{ link.url }}"
             class="
               flex
               items-center
@@ -30,7 +31,7 @@
             "
           >
             {{ link.title | upcase }}
-          </span>
+          </a>
           <span class="hidden absolute group-hover:nested-animation">
             <ul
               class="

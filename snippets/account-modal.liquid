@@ -18,7 +18,7 @@
 >
   {% if customer %}
   <a
-    href="/account"
+    href="{{ routes.account_url }}"
     class="
       px-2
       py-1
@@ -32,9 +32,9 @@
   >
     Account
   </a>
-  {{ 'Logout' | customer_logout_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
+  {{ 'Logout' | customer_logout_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide" @click="toggleAccountModal"'}}
   {% else %}
-  {{ 'Login' | customer_login_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
-  {{ 'Register' | customer_register_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide"'}}
+  {{ 'Login' | customer_login_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide" @click="toggleAccountModal"'}}
+  {{ 'Register' | customer_register_link | replace: '<a', '<a class="px-2 py-1 border border-transparent rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 transition-all tracking-wide" @click="toggleAccountModal"'}}
   {% endif %}
 </div>

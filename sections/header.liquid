@@ -3,36 +3,69 @@
     {% render 'feature-nav' %}
   </nav>
   <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
-    {% if section.settings.show_logo_image %}
-      {% if section.settings.logo_image %}
-        <img 
-          src="{{ section.settings.logo_image | img_url: 'master' }}" 
-          alt="{{ shop.name }}" 
-        />
-      {% else %}
-        {{ 'image' | placeholder_svg_tag: 'w-full h-20 object-cover bg-gray-200' }}
+    <span class="flex flex-col items-center">
+      {% if section.settings.show_logo_image %}
+        {% if section.settings.logo_image %}
+          <img 
+            src="{{ section.settings.logo_image | img_url: 'master' }}" 
+            alt="{{ shop.name }}" 
+            class="
+              max-h-24 
+              {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
+                mb-2 
+              {% endif %} 
+              {% if section.settings.show_logo_text and section.settings.reverse_logo %}
+                order-last
+                mt-2
+              {% endif %}
+            "
+          />
+        {% else %}
+          <figure 
+            class="max-h-24
+              {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
+              mb-2 
+              {% endif %} 
+              {% if section.settings.show_logo_text and section.settings.reverse_logo %}
+                order-last
+                mt-2
+              {% endif %}
+              "
+            >
+            {% render 'logo' %}
+          </figure>
+        {% endif %}
       {% endif %}
-    {% endif %}
-    {% if section.settings.show_logo_text %}
-      {{ section.settings.logo_text }}
-    {% else %}
-      {{ shop.name }}
-    {% endif %}
+      {% if section.settings.show_logo_text %}
+        {{ section.settings.logo_text }}
+      {% endif %}
+    </span>
   </a>
   <transition name="banner" mode="out-in" @after-enter="focusSearch">
     <nav 
-      class="mt-8 px-6 w-5/6 invisible xs:visible flex justify-center mx-auto border-t border-b border-gray-300 shadow"
+      class="mt-2 sm:mt-4 px-6 
+      {% if section.settings.show_logo_image or section.settings.show_logo_text %}
+      w-5/6 
+      border-t
+      {% endif %} 
+      invisible xs:visible flex justify-center mx-auto border-b border-gray-300 shadow"
       v-if="!isSearchVisible"
     >
       {% render 'site-nav' %}
     </nav>
     <nav
-      class="hide-element mt-8 px-6 w-5/6 xs:flex justify-center mx-auto relative"
+      class="hide-element mt-2 sm:mt-4 px-6 w-5/6 xs:flex justify-center mx-auto relative"
       :class="{ 'show-element': isSearchVisible }"
       id="search-modal"
       v-else
     >
-      <input class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" style="height: 38px;" type="text" placeholder="type your search here..." @input="onSearch" v-model="search">
+      <input 
+        type="text" 
+        style="height: 38px;" 
+        class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" 
+        placeholder="type your search here..." 
+        @input="onSearch" 
+        v-model="search">
     </nav>
   </transition>
   <div 
@@ -83,12 +116,11 @@ const headerComponent = (({ search }) => Vue.createApp({
         store.vue.toggleSearchModal();
       },
       toggleNestedLinks(event) {
-        console.log(this.$refs)
-          this.$refs[event.target.id].classList.toggle('hidden');
-          this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
-          this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
-          this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
-          this.closeAllNested(event.target.id);
+        this.$refs[event.target.id].classList.toggle('hidden');
+        this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
+        this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
+        this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
+        this.closeAllNested(event.target.id);
       },
       focusSearch() {
         const searchModal = document.getElementById('search-modal');
@@ -118,6 +150,8 @@ const headerComponent = (({ search }) => Vue.createApp({
       }
     },
   }).mount('#header'));
+
+  store.vue.components.push(headerComponent);
 </script>
 
 <style scoped>
@@ -239,14 +273,20 @@ const headerComponent = (({ search }) => Vue.createApp({
         {
           "type": "text",
           "id": "logo_text",
-          "label": "Logo Text"
+          "label": "Logo Text"        
         },
         {
           "type": "checkbox",
           "id": "show_logo_text",
           "default": true,
           "label": "Show Logo Text"
-        }
+        },
+        {
+          "type": "checkbox",
+          "id": "reverse_logo",
+          "label": "Reverse Logo Image and Text",
+          "default": false
+      }
     ]
 }
 {% endschema %}

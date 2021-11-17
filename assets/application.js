@@ -1,33 +1,12 @@
 // Put your application javascript here
 
+// Components:
+
 const store = {
-  vue: {},
-  initComponents(state) {
-    headerComponent(state);
-  },
-  loadState() {
-    const state = window.sessionStorage.getItem("shopify-store");
-    if (state === "undefined" || state === "{}") {
-      window.sessionStorage.removeItem("shopify-store");
-      return false;
-    } else {
-      return JSON.parse(state);
-    }
-  },
-  saveState() {
-    window.sessionStorage.setItem(
-      "shopify-store",
-      JSON.stringify(this.vue["state"])
-    );
-  },
-};
+  vue: {
+    components: [],
 
-document.getElementById("vue").onload = () => {
-  const state = store.loadState();
-  let initialState;
-
-  if (!state) {
-    initialState = {
+    state: {
       cart: {
         visible: false,
       },
@@ -41,11 +20,7 @@ document.getElementById("vue").onload = () => {
         visible: false,
         input: "",
       },
-    };
-  }
-
-  store.vue = Vue.reactive({
-    state: state ? state : initialState,
+    },
 
     toggleCartModal() {
       this.state.cart.visible = !this.state.cart.visible;
@@ -65,9 +40,38 @@ document.getElementById("vue").onload = () => {
       this.state.mobile.visible = false;
       this.state.search.visible = false;
     },
-  });
+  },
 
-  store.initComponents(state || initialState);
+  initComponents() {
+    this.vue.components.forEach((initComponent) =>
+      initComponent(this.vue.state)
+    );
+  },
+
+  loadState() {
+    const state = window.sessionStorage.getItem("shopify-store");
+    if (state === "undefined" || state === "{}") {
+      window.sessionStorage.removeItem("shopify-store");
+      return false;
+    } else {
+      return JSON.parse(state);
+    }
+  },
+  saveState() {
+    window.sessionStorage.setItem(
+      "shopify-store",
+      JSON.stringify(this.vue.state)
+    );
+  },
+};
+
+const savedState = store.loadState();
+
+document.getElementById("vue").onload = () => {
+  const state = savedState ? savedState : store.vue.state;
+  store.vue.state = Vue.reactive({ ...state });
+
+  store.initComponents();
 };
 
 window.onbeforeunload = () => {
