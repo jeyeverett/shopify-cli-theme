@@ -9,6 +9,8 @@ const store = {
     state: {
       cart: {
         visible: false,
+        items: [],
+        timestamp: null,
       },
       account: {
         visible: false,
@@ -20,6 +22,53 @@ const store = {
         visible: false,
         input: "",
       },
+    },
+
+    async getCart() {
+      const { items, timestamp } = this.state.cart;
+      if (items.length && isFresh(timestamp)) {
+        return;
+      } else {
+        try {
+          const response = await fetch("/cart.js");
+          const cartData = await response.json();
+          this.state.cart.items = cartData;
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+
+    async addToCart(data) {
+      try {
+        const response = await fetch("/cart/add.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          // throw error
+        }
+
+        //refresh the cart (store.getCart() is defined in application.js) then open it
+        await this.getCart();
+        this.toggleCartModal();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    isFresh(timestamp) {
+      // check if timestamp is less than 30 minutes old
+      const time = Date.now();
+      if ((time - timestamp) / 1000 < 1800) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     toggleCartModal() {
