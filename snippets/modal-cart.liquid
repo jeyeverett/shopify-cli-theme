@@ -17,7 +17,7 @@
   style="height: 26rem"
   v-show="isCartVisible"
 >
-	<article
+	<div
 		v-if="cartData && cartCount > 0"
 		class="px-2 pt-2 overflow-scroll overflow-x-hidden overflow-y-auto scrollbar"
 		style="max-height: 75%;"
@@ -55,29 +55,12 @@
 							relative
 						"
 					>
-						<button
-							class="font-medium absolute top-0 left-0 pl-1"
-							@click="decItem(item)"
-						>
-							{% render 'icon-caret-down' %}
-						</button>
-						<span 
-							class="text-xs font-medium border-l border-r border-gray-300"
-							style="padding: 0 1.125rem"
-						>
-							@{ item.quantity }
-						</span>
-						<button
-							class="font-medium absolute top-0 right-0 pr-1"
-							@click="incItem(item)"
-						>
-							{% render 'icon-caret-up' %}
-						</button>
+						{% render 'cart-quantity' %}
 					</span>
 				</div>
 			</li>
 		</ul>
-	</article>
+	</div>
 	
 	<div class="absolute bottom-5" style="width: 87.5%" v-if="cartData && cartCount > 0">
 		<div

@@ -1,0 +1,21 @@
+<button
+  class="font-medium absolute top-0 left-0 pl-1 bg-white z-10"
+  @click="decItem(item)"
+>
+  {% render 'icon-caret-down' %}
+</button>
+<span
+  class="text-xs font-medium border-l border-r border-gray-300 relative"
+  style="padding: 0 1.125rem"
+>
+  <span class="invisible">1</span>
+  <span class="absolute flex top-0 items-center justify-center">
+    @{ item.quantity }
+  </span>
+</span>
+<button
+  class="font-medium absolute top-0 right-0 pr-1 bg-white z-10"
+  @click="incItem(item)"
+>
+  {% render 'icon-caret-up' %}
+</button>

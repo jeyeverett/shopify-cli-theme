@@ -6,6 +6,7 @@ sections/template-article.liquid
 sections/template-blog.liquid
 sections/template-cart.liquid
 
+snippets/cart.liquid
 snippets/nav-feature.liquid
 snippets/nav-site.liquid
 snippets/modal-mobile.liquid

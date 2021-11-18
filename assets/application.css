@@ -646,6 +646,14 @@ video {
   order: 9999;
 }
 
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
 .row-auto {
   grid-row: auto;
 }
@@ -778,6 +786,10 @@ video {
   height: 2.5rem;
 }
 
+.h-16 {
+  height: 4rem;
+}
+
 .h-24 {
   height: 6rem;
 }
@@ -804,6 +816,10 @@ video {
 
 .max-h-24 {
   max-height: 6rem;
+}
+
+.w-0 {
+  width: 0px;
 }
 
 .w-5 {
@@ -948,8 +964,16 @@ video {
   list-style-type: decimal;
 }
 
+.auto-cols-fr {
+  grid-auto-columns: minmax(0, 1fr);
+}
+
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -958,6 +982,10 @@ video {
 
 .items-center {
   align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .justify-end {
@@ -1034,6 +1062,10 @@ video {
 
 .border-r {
   border-right-width: 1px;
+}
+
+.border-b-2 {
+  border-bottom-width: 2px;
 }
 
 .border-b {
@@ -1176,6 +1208,11 @@ video {
   padding-right: 1.5rem;
 }
 
+.py-0 {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -1189,11 +1226,6 @@ video {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pt-1 {
@@ -1600,12 +1632,20 @@ video {
     visibility: visible;
   }
 
+  .xs\:fixed {
+    position: fixed;
+  }
+
   .xs\:top-4 {
     top: 1rem;
   }
 
   .xs\:mt-4 {
     margin-top: 1rem;
+  }
+
+  .xs\:mt-44 {
+    margin-top: 11rem;
   }
 
   .xs\:flex {
@@ -1616,8 +1656,36 @@ video {
     display: none;
   }
 
+  .xs\:h-20 {
+    height: 5rem;
+  }
+
+  .xs\:w-full {
+    width: 100%;
+  }
+
+  .xs\:w-max {
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+  }
+
+  .xs\:border-b-0 {
+    border-bottom-width: 0px;
+  }
+
+  .xs\:py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
   .xs\:pt-4 {
     padding-top: 1rem;
+  }
+
+  .xs\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
   .xs\:text-xl {
@@ -1638,6 +1706,10 @@ video {
 
   .sm\:mb-8 {
     margin-bottom: 2rem;
+  }
+
+  .sm\:h-24 {
+    height: 6rem;
   }
 
   .sm\:h-80 {
@@ -1674,6 +1746,11 @@ video {
   .sm\:py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
+  }
+
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 
   .sm\:leading-loose {

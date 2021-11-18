@@ -1,78 +1,80 @@
-<header class="relative bg-white xs:pt-4" id="header">
-  <nav class="flex w-full">
-    {% render 'nav-feature' %}
-  </nav>
-  <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
-    <span class="flex flex-col items-center">
-      {% if section.settings.show_logo_image %}
-        {% if section.settings.logo_image %}
-          <img 
-            src="{{ section.settings.logo_image | img_url: 'master' }}" 
-            alt="{{ shop.name }}" 
-            class="
-              max-h-24 
-              {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
-                mb-2 
-              {% endif %} 
-              {% if section.settings.show_logo_text and section.settings.reverse_logo %}
-                order-last
-                mt-2
-              {% endif %}
-            "
-          />
-        {% else %}
-          <figure 
-            class="max-h-24
-              {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
-              mb-2 
-              {% endif %} 
-              {% if section.settings.show_logo_text and section.settings.reverse_logo %}
-                order-last
-                mt-2
-              {% endif %}
+<header class="bg-white xs:fixed w-full top-0 left-0 z-10" id="header">
+  <div class="relative border-b-2 border-gray-300 xs:border-b-0">
+    <nav class="flex w-full">
+      {% render 'nav-feature' %}
+    </nav>
+    <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
+      <span class="flex flex-col items-center">
+        {% if section.settings.show_logo_image %}
+          {% if section.settings.logo_image %}
+            <img 
+              src="{{ section.settings.logo_image | img_url: 'master' }}" 
+              alt="{{ shop.name }}" 
+              class="
+                max-h-24 
+                {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
+                  mb-2 
+                {% endif %} 
+                {% if section.settings.show_logo_text and section.settings.reverse_logo %}
+                  order-last
+                  mt-2
+                {% endif %}
               "
-            >
-            {% render 'logo' %}
-          </figure>
+            />
+          {% else %}
+            <figure 
+              class="max-h-24
+                {% if section.settings.show_logo_text and section.settings.reverse_logo == blank %}
+                mb-2 
+                {% endif %} 
+                {% if section.settings.show_logo_text and section.settings.reverse_logo %}
+                  order-last
+                  mt-2
+                {% endif %}
+                "
+              >
+              {% render 'logo' %}
+            </figure>
+          {% endif %}
         {% endif %}
-      {% endif %}
-      {% if section.settings.show_logo_text %}
-        {{ section.settings.logo_text }}
-      {% endif %}
-    </span>
-  </a>
-  <transition name="banner" mode="out-in" @after-enter="focusSearch">
-    <nav 
-      class="mt-2 sm:mt-4 px-6 
-      {% if section.settings.show_logo_image or section.settings.show_logo_text %}
-      sm:w-5/6
-      border-t
-      {% endif %} 
-      invisible xs:visible flex justify-center mx-auto border-b border-gray-300 shadow whitespace-nowrap"
-      v-if="!isSearchVisible"
-    >
-      {% render 'nav-site' %}
-    </nav>
-    <nav
-      class="hide-element mt-2 sm:mt-4 px-6 w-5/6 xs:flex justify-center mx-auto relative"
-      :class="{ 'show-element': isSearchVisible }"
-      id="search-modal"
-      v-else
-    >
-      <input 
-        type="text" 
-        style="height: 38px;" 
-        class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" 
-        placeholder="type your search here..." 
-        @input="onSearch" 
-        v-model="search">
-    </nav>
-  </transition>
-  <div 
-    class="hide-backdrop" 
-    :class="{ 'show-backdrop': isModalOpen }"
-    v-show="isModalOpen" 
-    @click="closeAllModals">
+        {% if section.settings.show_logo_text %}
+          {{ section.settings.logo_text }}
+        {% endif %}
+      </span>
+    </a>
+    <transition name="banner" mode="out-in" @after-enter="focusSearch">
+      <nav 
+        class="mt-2 sm:mt-4 px-6 w-0 xs:w-full
+        {% if section.settings.show_logo_image or section.settings.show_logo_text %}
+        sm:w-5/6
+        border-t
+        {% endif %} 
+        invisible xs:visible flex justify-center mx-auto border-b border-gray-300 shadow whitespace-nowrap"
+        v-if="!isSearchVisible"
+      >
+        {% render 'nav-site' %}
+      </nav>
+      <nav
+        class="hide-element mt-2 sm:mt-4 px-6 w-5/6 xs:flex justify-center mx-auto relative"
+        :class="{ 'show-element': isSearchVisible }"
+        id="search-modal"
+        v-else
+      >
+        <input 
+          type="text" 
+          style="height: 38px;" 
+          class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" 
+          placeholder="type your search here..." 
+          @input="onSearch" 
+          v-model="search">
+      </nav>
+    </transition>
+    <div 
+      class="hide-backdrop" 
+      :class="{ 'show-backdrop': isModalOpen }"
+      v-show="isModalOpen" 
+      @click="closeAllModals">
+    </div>
   </div>
 </header>
 
@@ -82,7 +84,6 @@
     data() {
       return {
         search: '',
-        cartLoading: false
       }
     },
     created() {
@@ -114,6 +115,9 @@
       },
       cartCount() {
         return this.cartData.item_count;
+      },
+      cartLoading() {
+        return store.vue.state.cart.loading;
       }
     },  
     methods: {
@@ -140,12 +144,12 @@
         this.closeAllNested(event.target.id);
       },
       incItem(item) {
-        this.cartLoading = true;
-        store.vue.incCartItem(item).then(() => this.cartLoading = false);
+        store.vue.cartLoading(true);
+        store.vue.incCartItem(item)
       },
       decItem(item) {
-        this.cartLoading = true;
-        store.vue.decCartItem(item).then(() => this.cartLoading = false);
+        store.vue.cartLoading(true);
+        store.vue.decCartItem(item)
       },
       focusSearch() {
         const searchModal = document.getElementById('search-modal');

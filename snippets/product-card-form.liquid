@@ -56,7 +56,8 @@
 </article>
 
 <script>
-  productCardComponent[{{ product.id }}] = ({ search }) => Vue.createApp({
+  productCardComponent[{{ product.id }}] = async ({ search }) => { 
+		Vue.createApp({
       delimiters: ["@{", "}"],
       data() {
         return {
@@ -70,7 +71,6 @@
       },
       created() {
         this.isLoading = true;
-
 				this.getProductData().then(() => this.isLoading = false);
       },
       computed: {
@@ -83,7 +83,7 @@
         },
 				savedProduct() {
 					return store.vue.state.products["{{ product.id }}"]
-				}
+				},
       },
       methods: {
         async addToCart(event) {
@@ -144,8 +144,10 @@
           option.visible = false;
         },
       },
-    }).mount("#product-card-form-{{ product.id }}");
+    }).mount("#product-card-form-{{ product.id }}")
+	};
 
+    
   store.vue.components.push(productCardComponent[{{ product.id }}]);
 </script>
 

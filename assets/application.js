@@ -12,6 +12,7 @@ const store = {
         visible: false,
         data: {},
         timestamp: null,
+        loading: false,
       },
       account: {
         visible: false,
@@ -27,8 +28,12 @@ const store = {
     },
 
     async getCart(reload = false) {
+      this.cartLoading(true);
       const { data, timestamp } = this.state.cart;
+      // use the cached cart if the product is already in the cart and the timestamp is valid
+      // reload forces a refetch (which we need to make a cart quantity update dynamically visible)
       if (!reload && data["items"] && this.isFresh(timestamp)) {
+        this.cartLoading(false);
         return;
       } else {
         try {
@@ -36,6 +41,8 @@ const store = {
           const cartData = await response.json();
           this.state.cart.data = cartData;
           this.state.cart.timestamp = Date.now();
+          this.cartLoading(false);
+          return;
         } catch (err) {
           console.log(err);
         }
@@ -56,9 +63,8 @@ const store = {
           // throw error
         }
 
-        //refresh the cart (store.getCart() is defined in application.js) then open it
-        await this.getCart();
-        this.toggleCartModal();
+        await this.getCart(true);
+        this.state.cart.visible = true;
       } catch (err) {
         console.log(err);
       }
@@ -105,6 +111,10 @@ const store = {
       }
     },
 
+    cartLoading(bool) {
+      this.state.cart.loading = bool;
+    },
+
     isFresh(timestamp) {
       // check if timestamp is less than 30 minutes old
       const time = Date.now();
@@ -148,9 +158,13 @@ const store = {
   },
 
   initComponents() {
-    this.vue.components.forEach((initComponent) =>
-      initComponent(this.vue.state)
-    );
+    // setTimeout is needed here to clear the main thread, allowing the Vue apps to load.
+    // Without it, if we are using cached data then this code will run prematurely
+    // setTimeout(() => {
+    this.vue.components.forEach((initComponent) => {
+      initComponent(this.vue.state);
+    });
+    // }, 200);
   },
 
   loadState() {
@@ -170,18 +184,21 @@ const store = {
   },
 };
 
-const savedState = store.loadState();
-
-document.getElementById("vue").onload = () => {
+const storeInit = async () => {
+  const savedState = store.loadState();
   const state = savedState ? savedState : store.vue.state;
   store.vue.state = Vue.reactive({ ...state });
 
-  store.vue
-    .getCart()
-    .then(() => store.initComponents())
-    .catch((err) => console.log(err));
+  try {
+    await store.vue.getCart();
+    store.initComponents();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-// window.onbeforeunload = () => {
-//   store.saveState();
-// };
+window.onload = storeInit;
+
+window.onbeforeunload = () => {
+  store.saveState();
+};
