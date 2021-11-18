@@ -1,19 +1,19 @@
 <ul class="space-x-6 flex items-center text-sm">
   {% if template.name == '404' %}
-    <li
-      class="
-        list-none
-        py-2
-        font-medium
-        text-gray-500
-        hover:text-gray-700
-        uppercase
-        tracking-wider
-      "
-    >
-      <a href="javascript:history.back()">Back</a>
-    </li>
-  {% elsif section.settings.menu.links %}
+  <li
+    class="
+      list-none
+      py-2
+      font-medium
+      text-gray-500
+      hover:text-gray-700
+      uppercase
+      tracking-wider
+    "
+  >
+    <a href="javascript:history.back()">Back</a>
+  </li>
+  {% elsif section.settings.menu.links %} 
     {% for link in section.settings.menu.links %} 
       {% if link.links != blank %}
         <li
@@ -32,7 +32,7 @@
           >
             {{ link.title | upcase }}
           </a>
-          <span class="hidden absolute group-hover:nested-animation">
+          <span class="z-10 hidden absolute group-hover:nested-animation">
             <ul
               class="
                 flex flex-col
@@ -45,28 +45,27 @@
                 relative
               "
             >
-              <!-- <span class="absolute left-2 top-1">{% render 'caret-icon' %}</span> -->
               {% for childLink in link.links %}
-              <li
-                class="
-                  px-2
-                  py-1
-                  border border-transparent
-                  rounded-sm
-                  list-none
-                  text-gray-500
-                  hover:text-gray-700 hover:bg-gray-300
-                  transition-all
-                  tracking-wide
-                "
-              >
-                <a href="{{ childLink.url }}">{{ childLink.title }}</a>
-              </li>
+                <li
+                  class="
+                    px-2
+                    py-1
+                    border border-transparent
+                    rounded-sm
+                    list-none
+                    text-gray-500
+                    hover:text-gray-700 hover:bg-gray-300
+                    transition-all
+                    tracking-wide
+                  "
+                >
+                  <a href="{{ childLink.url }}">{{ childLink.title }}</a>
+                </li>
               {% endfor %}
             </ul>
           </span>
         </li>
-        {% else %}
+      {% else %}
         <li
           class="
             list-none
@@ -80,7 +79,7 @@
           <a href="{{ link.url }}">{{ link.title | upcase }}</a>
         </li>
       {% endif %} 
-    {% endfor %}
+    {% endfor %} 
   {% else %}
     <li
       class="

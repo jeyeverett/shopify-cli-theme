@@ -1,0 +1,43 @@
+<figure>
+  <a href="{{ product.url | within: collection }}" class="select-none">
+    <div class="relative swiper swiper-{{- product.id -}}">
+      <div class="swiper-wrapper">
+        {% for image in product.images %}
+        <div class="swiper-slide">
+          <img
+            src="{{ image.src | img_url: '590x590' }}"
+            alt="{{ image.alt | escape }}"
+            class="swiper-image-{{- image.id -}}"
+          />
+        </div>
+        {% endfor %}
+      </div>
+      <span
+        class="absolute top-0 right-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-next swiper-button-next-{{ product.id }} hover:text-gray-700 swipe-icon"
+      ></span>
+      <span
+        class="absolute top-0 left-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-prev swiper-button-prev-{{ product.id }} hover:text-gray-700 swipe-icon"
+      ></span>
+    </div>
+  </a>
+</figure>
+
+<script>
+  new Swiper(".swiper-{{- product.id -}}", {
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 0,
+    loop: true,
+
+    breakpoints: {
+      600: {
+        allowTouchMove: false,
+        speed: 0,
+        navigation: {
+          nextEl: ".swiper-button-next-{{- product.id -}}",
+          prevEl: ".swiper-button-prev-{{- product.id -}}",
+        },
+      },
+    },
+  });
+</script>

@@ -5,7 +5,6 @@
     top-8
     right-8
     w-64
-    h-96
     flex flex-col
     px-4
     py-2
@@ -15,59 +14,64 @@
     shadow
   "
   :class="{ 'opacity-100': isCartVisible }"
+  style="height: 26rem"
   v-show="isCartVisible"
 >
 	<article
 		v-if="cart && cartCount > 0"
 		class="px-2 pt-2 overflow-scroll overflow-x-hidden overflow-y-auto"
-		style="max-height: 75%"
+		style="max-height: 75%;"
 	>
 		<ul>
 			<li
 				v-for="item in cart.items"
 				:key="item.title"
-				class="flex justify-between items-center h-32 mb-3"
+				class="flex justify-between items-center h-24 mb-4 last:mb-0"
 			>
-			<a :href="item.url" v-if="item.image">
+				<a :href="item.url" v-if="item.image">
 					<img class="h-32" :src="item.image" :alt="item.title" />
-			</a>
-			<div class="w-1/2 h-full flex flex-col justify-between">
-				<div>
-					<h3 class="text-sm font-semibold">
-							<a :href="item.url" class="">${ item.product_title }</a>
-					</h3>
-					<p class="text-sm font-light">${ item.variant_title }</p>
-					<p class="text-xs font-semibold text-right">
-							${ toPrice(item.price) }
-					</p>
+				</a>
+				<div class="w-1/2 h-full flex flex-col justify-between">
+					<div>
+						<h3 class="text-xs font-semibold">
+								<a :href="item.url" class="">@{ item.product_title }</a>
+						</h3>
+						<p class="text-xs font-light">@{ item.variant_title }</p>
+						<p class="text-xs font-semibold text-right">
+								@{ toPrice(item.price) }
+						</p>
 					</div>
 					<span
 						class="
 							flex
-							justify-between
 							items-center
+							justify-center
 							h-6
 							border border-gray-500
 							rounded
 							px-2
 							py-1
 							mt-2
+							relative
 						"
 					>
 						<button
-							class="font-medium quantity-btn relative quantity-selector"
+							class="font-medium absolute top-0 left-0 pl-1"
 							@click="decItem(item)"
 						>
-							-
+							{% render 'icon-caret-down' %}
 						</button>
-						<span class="text-xs font-medium quantity-selector">
-							${ item.quantity }
+						<span 
+							class="text-xs font-medium border-l border-r border-gray-300"
+							style="padding: 0 10px"
+						>
+							@{ item.quantity }
 						</span>
 						<button
-							class="font-medium quantity-btn relative quantity-selector"
+							class="font-medium absolute top-0 right-0 pr-1"
 							@click="incItem(item)"
 						>
-							+
+							{% render 'icon-caret-up' %}
 						</button>
 					</span>
 				</div>
@@ -87,7 +91,7 @@
 			"
 		>
 			<span>Subtotal: </span>
-			<span class="font-semibold">${ toPrice(cart.total_price) }</span>
+			<span class="font-semibold">@{ toPrice(cart.total_price) }</span>
 		</div>
 		<a
 			href="/checkout"

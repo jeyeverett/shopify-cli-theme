@@ -5,13 +5,13 @@
     class="xs:hidden relative hover:button-animation ml-6 z-10"
     @click="toggleMobileModal"
   >
-    {% render 'menu-icon' %}
+    {% render 'icon-menu' %}
   </button>
-  <transition name="mobile-modal">
-    {% render 'mobile-modal' %}
+  <transition name="modal-mobile">
+    {% render 'modal-mobile' %}
   </transition>
   <button class="relative hover:button-animation ml-6 z-10" @click="toggleSearchModal">
-    {% render 'search-icon' %}
+    {% render 'icon-search' %}
   </button>
 </div>
 <div class="absolute top-10 xs:top-4 right-0 flex items-center">
@@ -20,16 +20,16 @@
       class="relative hover:button-animation mr-6 z-10"
       @click="toggleAccountModal"
     >
-      {% render 'user-icon' %}
+      {% render 'icon-user' %}
     </button>
-    <transition name="account-modal">
-      {% render 'account-modal' %}
+    <transition name="modal-account">
+      {% render 'modal-account' %}
     </transition>
   {% endif %}
   <button class="relative hover:button-animation mr-6 z-10" @click="toggleCartModal">
-    {% render 'cart-icon' %}
+    {% render 'icon-cart' %}
   </button>
-  <transition name="cart-modal">
-    {% render 'cart-modal' %}
+  <transition name="modal-cart">
+    {% render 'modal-cart' %}
   </transition>
 </div>

@@ -1,6 +1,6 @@
 <header class="relative bg-white xs:pt-4" id="header">
   <nav class="flex w-full">
-    {% render 'feature-nav' %}
+    {% render 'nav-feature' %}
   </nav>
   <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
     <span class="flex flex-col items-center">
@@ -45,13 +45,13 @@
     <nav 
       class="mt-2 sm:mt-4 px-6 
       {% if section.settings.show_logo_image or section.settings.show_logo_text %}
-      w-5/6 
+      sm:w-5/6
       border-t
       {% endif %} 
-      invisible xs:visible flex justify-center mx-auto border-b border-gray-300 shadow"
+      invisible xs:visible flex justify-center mx-auto border-b border-gray-300 shadow whitespace-nowrap"
       v-if="!isSearchVisible"
     >
-      {% render 'site-nav' %}
+      {% render 'nav-site' %}
     </nav>
     <nav
       class="hide-element mt-2 sm:mt-4 px-6 w-5/6 xs:flex justify-center mx-auto relative"
@@ -77,100 +77,96 @@
 </header>
 
 <script>
-const headerComponent = (({ search }) => Vue.createApp({
-  delimiters: ["@{", "}"],
-  data() {
-    return {
-      search: ''
-    }
-  },
-  created() {
-    this.search = search.input;
-    store.vue.getCart();
-  },
-  computed: {
-    isAccountVisible() {
-      return store.vue.state.account.visible;
-    },
-    isMobileVisible() {
-      return store.vue.state.mobile.visible;
-    },
-    isSearchVisible() {
-      return store.vue.state.search.visible;
-    },
-    isCartVisible() {
-      return store.vue.state.cart.visible;
-    },
-    isModalOpen() {
-      if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible || this.isCartVisible) {
-        return true;
-      } else {
-        return false;
+  const headerComponent = (({ search }) => Vue.createApp({
+    delimiters: ["@{", "}"],
+    data() {
+      return {
+        search: ''
       }
     },
-    cart() {
-      return store.vue.state.cart.items;
+    created() {
+      this.search = search.input;
     },
-    cartCount() {
-      return this.cart.item_count;
-    }
-  },  
-  methods: {
-    async getCart() {
-      return await store.vue.getCart();
-    },
-    toPrice(price) {
-      return "$" + (price / 100).toFixed(2);
-    },
-    toggleAccountModal() {
-      store.vue.toggleAccountModal();
-    },
-    toggleMobileModal() {
-      store.vue.toggleMobileModal();
-    },
-    toggleSearchModal() {
-      store.vue.toggleSearchModal();
-    },
-    toggleCartModal() {
-      store.vue.toggleCartModal();
-    },
-    toggleNestedLinks(event) {
-      this.$refs[event.target.id].classList.toggle('hidden');
-      this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
-      this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
-      this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
-      this.closeAllNested(event.target.id);
-    },
-    focusSearch() {
-      const searchModal = document.getElementById('search-modal');
-      if (searchModal) {
-        const search = searchModal.firstChild;
-        search.focus();
-      }
-    },
-    onSearch() {
-      store.vue.state.search.input = this.search;
-    },
-    closeAllNested(currentNest = null) {
-      const nested = Object.keys(this.$refs);
-      nested.forEach(nest => {
-        //nested links are generated dynamically by liquid
-        if (!nest.includes('caret') && nest !== currentNest) {
-          this.$refs[nest].classList.add('hidden');
-          this.$refs[nest].classList.remove('nested-link-animation-in');
-          this.$refs[nest + "-caret-down"].classList.add('hidden');
-          this.$refs[nest + "-caret-up"].classList.remove('hidden');
+    computed: {
+      isAccountVisible() {
+        return store.vue.state.account.visible;
+      },
+      isMobileVisible() {
+        return store.vue.state.mobile.visible;
+      },
+      isSearchVisible() {
+        return store.vue.state.search.visible;
+      },
+      isCartVisible() {
+        return store.vue.state.cart.visible;
+      },
+      isModalOpen() {
+        if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible || this.isCartVisible) {
+          return true;
+        } else {
+          return false;
         }
-      })
+      },
+      cart() {
+        return store.vue.state.cart.data;
+      },
+      cartCount() {
+        return this.cart.item_count;
+      }
+    },  
+    methods: {
+      toPrice(price) {
+        return "$" + (price / 100).toFixed(2);
+      },
+      toggleAccountModal() {
+        store.vue.toggleAccountModal();
+      },
+      toggleMobileModal() {
+        store.vue.toggleMobileModal();
+      },
+      toggleSearchModal() {
+        store.vue.toggleSearchModal();
+      },
+      toggleCartModal() {
+        store.vue.toggleCartModal();
+      },
+      toggleNestedLinks(event) {
+        this.$refs[event.target.id].classList.toggle('hidden');
+        this.$refs[event.target.id].classList.toggle('nested-link-animation-in');
+        this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
+        this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
+        this.closeAllNested(event.target.id);
+      },
+      focusSearch() {
+        const searchModal = document.getElementById('search-modal');
+        if (searchModal) {
+          const search = searchModal.firstChild;
+          search.focus();
+        }
+      },
+      onSearch() {
+        store.vue.state.search.input = this.search;
+      },
+      closeAllNested(currentNest = null) {
+        const nested = Object.keys(this.$refs);
+        nested.forEach(nest => {
+          //nested links are generated dynamically by liquid
+          if (!nest.includes('caret') && nest !== currentNest) {
+            this.$refs[nest].classList.add('hidden');
+            this.$refs[nest].classList.remove('nested-link-animation-in');
+            this.$refs[nest + "-caret-down"].classList.add('hidden');
+            this.$refs[nest + "-caret-up"].classList.remove('hidden');
+          }
+        })
+      },
+      closeAllModals() {
+        store.vue.closeAll();
+        this.closeAllNested();
+      }
     },
-    closeAllModals() {
-      store.vue.closeAll();
-      this.closeAllNested();
-    }
-  },
-}).mount('#header'));
+  }).mount('#header'));
 
-store.vue.components.push(headerComponent);
+  store.vue.components.push(headerComponent);
 </script>
 
 <style scoped>
@@ -199,26 +195,25 @@ store.vue.components.push(headerComponent);
     width: 100%;
     opacity: 1;
   }
-
-  .quantity-selector {
-    line-height: 0.875rem; 
-    padding-top: 0.125rem;
-  }
-
   
-  .quantity-btn::after {
+  .quantity-btn-left::after {
     position: absolute;
-    top: -2px;
-    left: -55%;
+    top: 0;
+    left: 0.25rem;
     transform: scale(0);
     opacity: 0;
   }
 
-  .quantity-selector:last-child::after {
-    left: -40.5%;
+  .quantity-btn-right::after {
+    position: absolute;
+    top: 0;
+    right: 0.25rem;
+    transform: scale(0);
+    opacity: 0;
   }
 
-  .quantity-btn:hover::after {
+  .quantity-btn-left:hover::after,
+  .quantity-btn-right:hover::after {
     content: "";
     height: 20px;
     width: 20px;
@@ -236,27 +231,27 @@ store.vue.components.push(headerComponent);
     }
   }
 
-  .account-modal-enter-active {
+  .modal-account-enter-active {
     animation: animate-modal-right .2s forwards;
   }
 
-  .account-modal-leave-active {
+  .modal-account-leave-active {
     animation: animate-modal-right .2s reverse;
   }
 
-  .cart-modal-enter-active {
+  .modal-cart-enter-active {
     animation: animate-modal-right .2s forwards;
   }
 
-  .cart-modal-leave-active {
+  .modal-cart-leave-active {
     animation: animate-modal-right .2s reverse;
   }
 
-  .mobile-modal-enter-active {
+  .modal-mobile-enter-active {
     animation: animate-modal-left .2s forwards;
   }
 
-  .mobile-modal-leave-active {
+  .modal-mobile-leave-active {
     animation: animate-modal-left .2s reverse;
   }
 

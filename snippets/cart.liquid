@@ -1,0 +1,26 @@
+<div id="cart">Cart Page</div>
+
+<script>
+  const cartPage = ({ cart }) =>
+    Vue.createApp({
+      delimiters: ["@{", "}"],
+      data() {
+        return {};
+      },
+      computed: {
+        cart() {
+          return cart.items;
+        },
+        cartCount() {
+          return this.cart.item_count;
+        },
+      },
+      methods: {
+        toPrice(price) {
+          return "$" + (price / 100).toFixed(2);
+        },
+      },
+    }).mount("#cart");
+
+  store.vue.components.push(cartPage);
+</script>

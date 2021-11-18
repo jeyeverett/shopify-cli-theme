@@ -32,7 +32,7 @@
       {{ section.settings.mobile_menu_heading | upcase }}
     </h4>
     <button @click="closeAllModals">
-      {% render 'close-icon' %}
+      {% render 'icon-close' %}
     </button>
   </div>
   <ul class="flex flex-col text-sm" id="mobile-nav-list">
@@ -58,10 +58,10 @@
         >
           {{ link.title | upcase }}
           <span ref="{{ link.title | downcase | replace: ' ', '-' }}-caret-up">
-            {% render 'caret-up-icon' %}
+            {% render 'icon-caret-up' %}
           </span>
           <span class="hidden" ref="{{ link.title | downcase | replace: ' ', '-' }}-caret-down">
-            {% render 'caret-down-icon' %}
+            {% render 'icon-caret-down' %}
           </span>
           <ul
             class="

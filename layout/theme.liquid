@@ -10,18 +10,15 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
+
     <script id="vue" src="https://unpkg.com/vue@next" async></script>
 
-    {{
-      content_for_header
-    }}
+    {{ content_for_header }}
     <!-- Header hook for plugins -->
-    {{
-      "application.css" | asset_url | stylesheet_tag
-    }}
-    {{
-      "application.js" | asset_url | script_tag
-    }}
+    {{ "swiper.min.css" | asset_url | stylesheet_tag }}
+    {{ "swiper.min.js" | asset_url | script_tag }}
+    {{ "application.css" | asset_url | stylesheet_tag }}
+    {{ "application.js" | asset_url | script_tag }}
   </head>
   <body>
     {% section 'header' %}

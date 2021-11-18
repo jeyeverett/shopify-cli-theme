@@ -1,0 +1,193 @@
+<article
+  class="p-4 flex flex-col h-44 relative"
+  id="product-card-form-{{ product.id }}"
+>
+  <span>
+    <h3 class="text-gray-700 font-medium">
+      <a href="{{ product.url | within: collection }}">
+        {{ product.title | upcase | truncate: 30 }}
+      </a>
+    </h3>
+
+    <p class="my-2 text-gray-700 font-medium text-right">{{ product.price | money }}</p>
+  </span>
+
+    <transition mode="out-in">
+      <div v-if="isLoading" class="flex justify-center items-center h-10">
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+      
+      <form v-else>
+        <ul
+          v-for="(option, optionIndex) in form.options"
+          :key="variantId + '-' + option.name"
+          style="opacity: 0"
+          :style="{ opacity: isLoading ? 0 : 1 }"
+        >
+          {% render 'product-card-option-select' %}
+        </ul>
+        <button
+          class="
+            px-4
+            py-2
+            border border-gray-700 rounded-sm
+            bg-gray-700
+            text-white
+            hover:bg-transparent hover:text-gray-700
+            transition-all
+            absolute
+            bottom-3
+            right-3
+            text-sm
+          "
+          @click="addToCart"
+          style="opacity: 0"
+          :style="{ opacity: isLoading ? 0 : 1 }"
+        >
+          Add to cart
+        </button>
+    </transition>
+  </form>
+</article>
+
+<script>
+  productCardComponent[{{ product.id }}] = ({ search }) => Vue.createApp({
+      delimiters: ["@{", "}"],
+      data() {
+        return {
+          variantsMap: {}, //map variant title to variant id
+          form: {
+            options: [],
+            selected: {},
+          },
+          isLoading: false,
+        };
+      },
+      created() {
+        this.isLoading = true;
+
+				this.getProductData().then(() => this.isLoading = false);
+      },
+      computed: {
+        variantId() {
+          //generate the variant title for lookup in the variantsMap
+          const variantTitle = Object.values(this.form.selected).reduce(
+            (acc, selection) => acc + " / " + selection
+          );
+          return this.variantsMap[variantTitle];
+        },
+				savedProduct() {
+					return store.vue.state.products["{{ product.id }}"]
+				}
+      },
+      methods: {
+        async addToCart(event) {
+          event.preventDefault();
+
+          const item = {
+            id: this.variantId,
+            quantity: 1,
+          };
+
+          store.vue.addToCart(item);
+        },
+				async getProductData() {
+					const product = this.savedProduct ? this.savedProduct :	null;
+
+					if (product && store.vue.isFresh(product.timestamp)) {
+
+						return this.mapProductData(product);
+					} else {
+						const data = await this.fetchProductData();
+						return this.mapProductData(data);
+					}
+				},
+				mapProductData(data) {
+					data.variants.map(
+						(variant) => (this.variantsMap[variant.title] = variant.id)
+					);
+
+					//map product options to form
+					data.options.forEach((option) => {
+						this.form.options.push({
+							...option,
+							visible: false,
+						});
+						// sets the default selected option for each option
+						this.form.selected[option.name] = option.values[0];
+					});
+				},
+				async fetchProductData() {
+					try {
+						return await store.vue.getProductData("{{ product.handle }}");
+					} catch (err) {
+						console.log(err);
+					}
+				},				
+
+        toggleOptionsList(option) {
+          option.visible = !option.visible;
+        },
+        closeAllOptions() {
+          this.form.options.forEach((option) => (option.visible = false));
+        },
+        isSelected(option, value) {
+          return this.form.selected[option.name] === value;
+        },
+        updateSelected(option, value) {
+          this.form.selected[option.name] = value;
+          option.visible = false;
+        },
+      },
+    }).mount("#product-card-form-{{ product.id }}");
+
+  store.vue.components.push(productCardComponent[{{ product.id }}]);
+</script>
+
+<style scoped>
+  .selected-option {
+    text-decoration: line-through;
+  }
+
+  /* Spinner */
+  .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid darkgrey;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkgrey transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

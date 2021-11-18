@@ -1,6 +1,7 @@
 // Put your application javascript here
 
 // Components:
+const productCardComponent = {};
 
 const store = {
   vue: {
@@ -9,7 +10,7 @@ const store = {
     state: {
       cart: {
         visible: false,
-        items: [],
+        data: {},
         timestamp: null,
       },
       account: {
@@ -22,17 +23,19 @@ const store = {
         visible: false,
         input: "",
       },
+      products: {},
     },
 
     async getCart() {
-      const { items, timestamp } = this.state.cart;
-      if (items.length && isFresh(timestamp)) {
+      const { data, timestamp } = this.state.cart;
+      if (data["items"] && this.isFresh(timestamp)) {
         return;
       } else {
         try {
           const response = await fetch("/cart.js");
           const cartData = await response.json();
-          this.state.cart.items = cartData;
+          this.state.cart.data = cartData;
+          this.state.cart.timestamp = Date.now();
         } catch (err) {
           console.log(err);
         }
@@ -68,6 +71,18 @@ const store = {
         return true;
       } else {
         return false;
+      }
+    },
+
+    async getProductData(productHandle) {
+      try {
+        const response = await fetch(`/products/${productHandle}.js`);
+        const data = await response.json();
+        this.state.products[data.id] = data;
+        this.state.products[data.id].timestamp = Date.now();
+        return data;
+      } catch (err) {
+        console.log(err);
       }
     },
 
@@ -120,9 +135,12 @@ document.getElementById("vue").onload = () => {
   const state = savedState ? savedState : store.vue.state;
   store.vue.state = Vue.reactive({ ...state });
 
-  store.initComponents();
+  store.vue
+    .getCart()
+    .then(() => store.initComponents())
+    .catch((err) => console.log(err));
 };
 
-window.onbeforeunload = () => {
-  store.saveState();
-};
+// window.onbeforeunload = () => {
+//   store.saveState();
+// };
