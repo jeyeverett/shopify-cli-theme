@@ -26,9 +26,9 @@ const store = {
       products: {},
     },
 
-    async getCart() {
+    async getCart(reload = false) {
       const { data, timestamp } = this.state.cart;
-      if (data["items"] && this.isFresh(timestamp)) {
+      if (!reload && data["items"] && this.isFresh(timestamp)) {
         return;
       } else {
         try {
@@ -59,6 +59,47 @@ const store = {
         //refresh the cart (store.getCart() is defined in application.js) then open it
         await this.getCart();
         this.toggleCartModal();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async incCartItem(item) {
+      const data = {
+        id: item.key,
+        quantity: item.quantity + 1,
+      };
+
+      try {
+        await fetch("/cart/change.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        return this.getCart(true);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async decCartItem(item) {
+      const data = {
+        id: item.key,
+        quantity: item.quantity > 1 ? item.quantity - 1 : 0,
+      };
+
+      try {
+        await fetch("/cart/change.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        return this.getCart(true);
       } catch (err) {
         console.log(err);
       }

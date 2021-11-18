@@ -17,6 +17,7 @@ module.exports = {
     extend: {
       display: ["group-hover"],
       margin: ["last"],
+      inset: ["hover"],
     },
   },
   plugins: [],

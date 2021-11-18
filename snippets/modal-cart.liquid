@@ -18,26 +18,26 @@
   v-show="isCartVisible"
 >
 	<article
-		v-if="cart && cartCount > 0"
-		class="px-2 pt-2 overflow-scroll overflow-x-hidden overflow-y-auto"
+		v-if="cartData && cartCount > 0"
+		class="px-2 pt-2 overflow-scroll overflow-x-hidden overflow-y-auto scrollbar"
 		style="max-height: 75%;"
 	>
 		<ul>
 			<li
-				v-for="item in cart.items"
+				v-for="item in cartData.items"
 				:key="item.title"
 				class="flex justify-between items-center h-24 mb-4 last:mb-0"
 			>
 				<a :href="item.url" v-if="item.image">
-					<img class="h-32" :src="item.image" :alt="item.title" />
+					<img class="h-24" :src="item.image" :alt="item.title" />
 				</a>
 				<div class="w-1/2 h-full flex flex-col justify-between">
 					<div>
-						<h3 class="text-xs font-semibold">
+						<h3 class="text-xs font-semibold text-gray-700">
 								<a :href="item.url" class="">@{ item.product_title }</a>
 						</h3>
-						<p class="text-xs font-light">@{ item.variant_title }</p>
-						<p class="text-xs font-semibold text-right">
+						<p class="text-xs font-light text-gray-700">@{ item.variant_title }</p>
+						<p class="text-xs font-semibold text-right text-gray-700">
 								@{ toPrice(item.price) }
 						</p>
 					</div>
@@ -63,7 +63,7 @@
 						</button>
 						<span 
 							class="text-xs font-medium border-l border-r border-gray-300"
-							style="padding: 0 10px"
+							style="padding: 0 1.125rem"
 						>
 							@{ item.quantity }
 						</span>
@@ -79,19 +79,21 @@
 		</ul>
 	</article>
 	
-	<div class="absolute bottom-5" style="width: 87.5%" v-if="cart && cartCount > 0">
+	<div class="absolute bottom-5" style="width: 87.5%" v-if="cartData && cartCount > 0">
 		<div
 			class="
 			flex
 			justify-between
 			items-center
 			text-sm
-			py-3
-			border-t border-gray-700
+			pb-3
+			pt-2
+			mt-1
+			border-t border-gray-500
 			"
 		>
-			<span>Subtotal: </span>
-			<span class="font-semibold">@{ toPrice(cart.total_price) }</span>
+			<span class="font-medium text-gray-700">Subtotal: </span>
+			<span class="font-semibold text-gray-500">@{ toPrice(cartData.total_price) }</span>
 		</div>
 		<a
 			href="/checkout"
@@ -109,7 +111,17 @@
 			transition-colors
 			"
 		>
-			Checkout
+			<transition mode="out-in">
+				<div v-if="cartLoading" class="flex justify-center items-center h-6">
+					<div class="lds-ring-small">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					</div>
+				</div>
+				<span v-else>Checkout</span>
+			</transition>
 		</a>
 	</div>
 

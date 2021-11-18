@@ -81,7 +81,8 @@
     delimiters: ["@{", "}"],
     data() {
       return {
-        search: ''
+        search: '',
+        cartLoading: false
       }
     },
     created() {
@@ -101,17 +102,18 @@
         return store.vue.state.cart.visible;
       },
       isModalOpen() {
-        if (this.isSearchVisible || this.isMobileVisible || this.isAccountVisible || this.isCartVisible) {
+        if (this.isSearchVisible || this.isMobileVisible || 
+            this.isAccountVisible || this.isCartVisible) {
           return true;
         } else {
           return false;
         }
       },
-      cart() {
+      cartData() {
         return store.vue.state.cart.data;
       },
       cartCount() {
-        return this.cart.item_count;
+        return this.cartData.item_count;
       }
     },  
     methods: {
@@ -136,6 +138,14 @@
         this.$refs[event.target.id + "-caret-down"].classList.toggle('hidden');
         this.$refs[event.target.id + "-caret-up"].classList.toggle('hidden');
         this.closeAllNested(event.target.id);
+      },
+      incItem(item) {
+        this.cartLoading = true;
+        store.vue.incCartItem(item).then(() => this.cartLoading = false);
+      },
+      decItem(item) {
+        this.cartLoading = true;
+        store.vue.decCartItem(item).then(() => this.cartLoading = false);
       },
       focusSearch() {
         const searchModal = document.getElementById('search-modal');
@@ -169,7 +179,23 @@
   store.vue.components.push(headerComponent);
 </script>
 
-<style scoped>
+<style scoped> 
+  .scrollbar::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 5px;
+    background-color: #F5F5F5;
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+  }
+  
+  .scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: darkgrey;
+  }
+
   .hide-element {
     position: absolute;
     opacity: 0;
