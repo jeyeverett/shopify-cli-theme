@@ -63,7 +63,7 @@
         <input 
           type="text" 
           style="height: 38px;" 
-          class="w-full border border-gray-300 px-4 shadow text-gray-500 relative z-10" 
+          class="w-full border border-gray-300 px-4 text-center shadow text-gray-500 relative z-10" 
           placeholder="type your search here..." 
           @input="onSearch" 
           v-model="search">
@@ -145,11 +145,11 @@
       },
       incItem(item) {
         store.vue.cartLoading(true);
-        store.vue.incCartItem(item)
+        store.vue.incCartItem(item).then(() => store.vue.cartLoading(false));
       },
       decItem(item) {
         store.vue.cartLoading(true);
-        store.vue.decCartItem(item)
+        store.vue.decCartItem(item).then(() => store.vue.cartLoading(false));
       },
       focusSearch() {
         const searchModal = document.getElementById('search-modal');

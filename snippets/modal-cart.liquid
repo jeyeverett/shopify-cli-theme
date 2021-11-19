@@ -93,15 +93,11 @@
 			hover:bg-white hover:text-gray-700
 			transition-colors
 			"
+			:class="{ 'pointer-events-none': cartLoading }"
 		>
 			<transition mode="out-in">
 				<div v-if="cartLoading" class="flex justify-center items-center h-6">
-					<div class="lds-ring-small">
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					</div>
+					{% render 'spinner-small' %}
 				</div>
 				<span v-else>Checkout</span>
 			</transition>

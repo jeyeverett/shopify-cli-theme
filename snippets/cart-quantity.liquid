@@ -8,7 +8,7 @@
   class="text-xs font-medium border-l border-r border-gray-300 relative"
   style="padding: 0 1.125rem"
 >
-  <span class="invisible">1</span>
+  <span class="invisible">@{ item.quantity < 10 ? 5 : 15 }</span>
   <span class="absolute flex top-0 items-center justify-center">
     @{ item.quantity }
   </span>

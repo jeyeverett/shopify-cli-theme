@@ -10,9 +10,11 @@ const store = {
     state: {
       cart: {
         visible: false,
-        data: {},
-        timestamp: null,
         loading: false,
+        data: {
+          timestamp: null,
+          items: null,
+        },
       },
       account: {
         visible: false,
@@ -27,12 +29,24 @@ const store = {
       products: {},
     },
 
+    async getProductData(productHandle) {
+      try {
+        const response = await fetch(`/products/${productHandle}.js`);
+        const data = await response.json();
+        this.state.products[data.id] = data;
+        this.state.products[data.id].timestamp = Date.now();
+        return data;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
     async getCart(reload = false) {
       this.cartLoading(true);
-      const { data, timestamp } = this.state.cart;
+      const { data } = this.state.cart;
       // use the cached cart if the product is already in the cart and the timestamp is valid
       // reload forces a refetch (which we need to make a cart quantity update dynamically visible)
-      if (!reload && data["items"] && this.isFresh(timestamp)) {
+      if (!reload && data.items && this.isFresh(data.timestamp)) {
         this.cartLoading(false);
         return;
       } else {
@@ -40,7 +54,7 @@ const store = {
           const response = await fetch("/cart.js");
           const cartData = await response.json();
           this.state.cart.data = cartData;
-          this.state.cart.timestamp = Date.now();
+          this.state.cart.data.timestamp = Date.now();
           this.cartLoading(false);
           return;
         } catch (err) {
@@ -60,7 +74,7 @@ const store = {
         });
 
         if (!response.ok) {
-          // throw error
+          // show error
         }
 
         await this.getCart(true);
@@ -105,6 +119,7 @@ const store = {
           },
           body: JSON.stringify(data),
         });
+
         return this.getCart(true);
       } catch (err) {
         console.log(err);
@@ -122,18 +137,6 @@ const store = {
         return true;
       } else {
         return false;
-      }
-    },
-
-    async getProductData(productHandle) {
-      try {
-        const response = await fetch(`/products/${productHandle}.js`);
-        const data = await response.json();
-        this.state.products[data.id] = data;
-        this.state.products[data.id].timestamp = Date.now();
-        return data;
-      } catch (err) {
-        console.log(err);
       }
     },
 
@@ -158,13 +161,9 @@ const store = {
   },
 
   initComponents() {
-    // setTimeout is needed here to clear the main thread, allowing the Vue apps to load.
-    // Without it, if we are using cached data then this code will run prematurely
-    // setTimeout(() => {
     this.vue.components.forEach((initComponent) => {
       initComponent(this.vue.state);
     });
-    // }, 200);
   },
 
   loadState() {
@@ -176,6 +175,7 @@ const store = {
       return JSON.parse(state);
     }
   },
+
   saveState() {
     window.sessionStorage.setItem(
       "shopify-store",
@@ -199,6 +199,6 @@ const storeInit = async () => {
 
 window.onload = storeInit;
 
-window.onbeforeunload = () => {
-  store.saveState();
-};
+// window.onbeforeunload = () => {
+//   store.saveState();
+// };
