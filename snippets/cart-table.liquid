@@ -184,23 +184,24 @@
 </div>
 
 <script>
-  const cartPage = (state) =>
+  const cartPage = ({ cart }) =>
     Vue.createApp({
       delimiters: ["@{", "}"],
       data() {
-        return {
-          isCartUpdating: false,
-        };
+        return {};
       },
       computed: {
         cartData() {
-          return store.vue.state.cart.data;
+          return cart.data;
         },
         cartCount() {
           return this.cartData.item_count;
         },
         isCartLoading() {
-          return store.vue.state.cart.loading;
+          return cart.loading;
+        },
+        isCartUpdating() {
+          return cart.updating;
         },
       },
       methods: {
@@ -208,15 +209,30 @@
           return "$" + (price / 100).toFixed(2);
         },
         incItem(item) {
-          this.isCartUpdating = true;
-          store.vue.incCartItem(item).then(() => (this.isCartUpdating = false));
+          store.vue.cartUpdating(true);
+          store.vue.incCartItem(item).then(() => store.vue.cartUpdating(false));
         },
         decItem(item) {
-          this.isCartUpdating = true;
-          store.vue.decCartItem(item).then(() => (this.isCartUpdating = false));
+          store.vue.cartUpdating(true);
+          store.vue.decCartItem(item).then(() => {
+            store.vue.cartUpdating(false);
+            if (this.cartData.item_count === 0) {
+              location.reload();
+            }
+          });
         },
       },
     }).mount("#cart");
 
   store.vue.components.push(cartPage);
 </script>
+
+<style scoped>
+  .v-enter-active {
+    animation: fade 0.2s forwards;
+  }
+
+  .v-leave-active {
+    animation: fade 0.2s reverse;
+  }
+</style>

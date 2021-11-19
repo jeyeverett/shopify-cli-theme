@@ -3,7 +3,12 @@
     <nav class="flex w-full">
       {% render 'nav-feature' %}
     </nav>
-    <a href="{{ shop.secure_url }}" class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" style="width: max-content">
+    <a 
+      href="{{ shop.secure_url }}" 
+      class="mt-2 xs:mt-4 block mx-auto text-lg xs:text-xl font-bold text-gray-500" 
+      style="width: max-content"
+      aria-label="link to homepage"
+    >
       <span class="flex flex-col items-center">
         {% if section.settings.show_logo_image %}
           {% if section.settings.logo_image %}
@@ -79,7 +84,7 @@
 </header>
 
 <script>
-  const headerComponent = (({ search }) => Vue.createApp({
+  const headerComponent = (({ account, mobile, search, cart }) => Vue.createApp({
     delimiters: ["@{", "}"],
     data() {
       return {
@@ -91,16 +96,16 @@
     },
     computed: {
       isAccountVisible() {
-        return store.vue.state.account.visible;
+        return account.visible;
       },
       isMobileVisible() {
-        return store.vue.state.mobile.visible;
+        return mobile.visible;
       },
       isSearchVisible() {
-        return store.vue.state.search.visible;
+        return search.visible;
       },
       isCartVisible() {
-        return store.vue.state.cart.visible;
+        return cart.visible;
       },
       isModalOpen() {
         if (this.isSearchVisible || this.isMobileVisible || 
@@ -111,13 +116,16 @@
         }
       },
       cartData() {
-        return store.vue.state.cart.data;
+        return cart.data;
       },
       cartCount() {
         return this.cartData.item_count;
       },
-      cartLoading() {
-        return store.vue.state.cart.loading;
+      isCartLoading() {
+        return cart.loading;
+      },
+      isCartUpdating() {
+        return cart.updating;
       }
     },  
     methods: {
@@ -144,12 +152,18 @@
         this.closeAllNested(event.target.id);
       },
       incItem(item) {
-        store.vue.cartLoading(true);
-        store.vue.incCartItem(item).then(() => store.vue.cartLoading(false));
+        store.vue.cartUpdating(true);
+        store.vue.incCartItem(item).then(() => {
+          store.vue.cartUpdating(false);
+          store.saveState();
+        });
       },
       decItem(item) {
-        store.vue.cartLoading(true);
-        store.vue.decCartItem(item).then(() => store.vue.cartLoading(false));
+        store.vue.cartUpdating(true);
+        store.vue.decCartItem(item).then(() =>{ 
+          store.vue.cartUpdating(false);
+          store.saveState();
+        });
       },
       focusSearch() {
         const searchModal = document.getElementById('search-modal');
@@ -159,7 +173,7 @@
         }
       },
       onSearch() {
-        store.vue.state.search.input = this.search;
+        search.input = this.search;
       },
       closeAllNested(currentNest = null) {
         const nested = Object.keys(this.$refs);
@@ -171,7 +185,7 @@
             this.$refs[nest + "-caret-down"].classList.add('hidden');
             this.$refs[nest + "-caret-up"].classList.remove('hidden');
           }
-        })
+        });
       },
       closeAllModals() {
         store.vue.closeAll();

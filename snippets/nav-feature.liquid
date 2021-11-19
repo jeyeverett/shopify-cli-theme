@@ -4,13 +4,18 @@
   <button
     class="xs:hidden relative hover:button-animation ml-6 z-10"
     @click="toggleMobileModal"
+    aria-label="mobile menu button"
   >
     {% render 'icon-menu' %}
   </button>
   <transition name="modal-mobile">
     {% render 'modal-mobile' %}
   </transition>
-  <button class="relative hover:button-animation ml-6 z-10" @click="toggleSearchModal">
+  <button 
+    class="relative hover:button-animation ml-6 z-10" 
+    @click="toggleSearchModal" 
+    aria-label="site search button"
+  >
     {% render 'icon-search' %}
   </button>
 </div>
@@ -19,6 +24,7 @@
     <button
       class="relative hover:button-animation mr-6 z-10"
       @click="toggleAccountModal"
+      aria-label="user account button"
     >
       {% render 'icon-user' %}
     </button>
@@ -26,7 +32,11 @@
       {% render 'modal-account' %}
     </transition>
   {% endif %}
-  <button class="relative hover:button-animation mr-6 z-10" @click="toggleCartModal">
+  <button 
+    class="relative hover:button-animation mr-6 z-10" 
+    @click="toggleCartModal"
+    aria-label="shopping cart button"
+  >
     {% render 'icon-cart' %}
   </button>
   <transition name="modal-cart">

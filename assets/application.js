@@ -1,8 +1,5 @@
 // Put your application javascript here
 
-// Components:
-const productCardComponent = {};
-
 const store = {
   vue: {
     components: [],
@@ -11,6 +8,7 @@ const store = {
       cart: {
         visible: false,
         loading: false,
+        updating: false,
         data: {
           timestamp: null,
           items: null,
@@ -42,21 +40,17 @@ const store = {
     },
 
     async getCart(reload = false) {
-      this.cartLoading(true);
       const { data } = this.state.cart;
       // use the cached cart if the product is already in the cart and the timestamp is valid
       // reload forces a refetch (which we need to make a cart quantity update dynamically visible)
       if (!reload && data.items && this.isFresh(data.timestamp)) {
         this.cartLoading(false);
-        return;
       } else {
         try {
           const response = await fetch("/cart.js");
           const cartData = await response.json();
           this.state.cart.data = cartData;
           this.state.cart.data.timestamp = Date.now();
-          this.cartLoading(false);
-          return;
         } catch (err) {
           console.log(err);
         }
@@ -130,6 +124,10 @@ const store = {
       this.state.cart.loading = bool;
     },
 
+    cartUpdating(bool) {
+      this.state.cart.updating = bool;
+    },
+
     isFresh(timestamp) {
       // check if timestamp is less than 30 minutes old
       const time = Date.now();
@@ -199,6 +197,7 @@ const storeInit = async () => {
 
 window.onload = storeInit;
 
-// window.onbeforeunload = () => {
-//   store.saveState();
-// };
+window.onbeforeunload = () => {
+  store.vue.closeAll();
+  store.saveState();
+};

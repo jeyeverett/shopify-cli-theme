@@ -13,13 +13,8 @@
   </span>
 
     <transition mode="out-in">
-      <div v-if="isLoading" class="flex justify-center items-center h-10">
-        <div class="lds-ring">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+      <div v-if="isCartLoading" class="flex justify-center items-center h-10">
+        {% render 'spinner' %}
       </div>
       
       <form v-else>
@@ -27,7 +22,7 @@
           v-for="(option, optionIndex) in form.options"
           :key="variantId + '-' + option.name"
           style="opacity: 0"
-          :style="{ opacity: isLoading ? 0 : 1 }"
+          :style="{ opacity: isCartLoading ? 0 : 1 }"
         >
           {% render 'product-card-option-select' %}
         </ul>
@@ -43,20 +38,35 @@
             absolute
             bottom-3
             right-3
-            text-sm
           "
           @click="addToCart"
           style="opacity: 0"
-          :style="{ opacity: isLoading ? 0 : 1 }"
+          :style="{ opacity: isCartLoading ? 0 : 1 }"
+			    :class="{ 'pointer-events-none': isCartUpdating }"
         >
-          Add to cart
+          <transition 
+            mode="out-in"
+          >
+            <div
+              v-if="isCartUpdating"
+              class="flex justify-center items-center h-6"
+            > 
+              <span class="relative">
+                <span class="invisible">Add to cart</span>
+                <span class="absolute -top-2 left-5 flex items-center justify-center">
+                  {% render 'spinner-small' %}
+                </span>
+              </span>
+            </div>
+            <span v-else>Add to cart</span>
+          </transition>
         </button>
     </transition>
   </form>
 </article>
 
 <script>
-  productCardComponent[{{ product.id }}] = async ({ search }) => { 
+  store.vue.components.push(async () => { 
 		Vue.createApp({
       delimiters: ["@{", "}"],
       data() {
@@ -66,12 +76,14 @@
             options: [],
             selected: {},
           },
-          isLoading: false,
+          isCartUpdating: false
         };
       },
       created() {
-        this.isLoading = true;
-				this.getProductData().then(() => this.isLoading = false);
+        store.vue.cartLoading(true);
+				this.getProductData().then(() => {
+          store.vue.cartLoading(false)
+        });
       },
       computed: {
         variantId() {
@@ -84,27 +96,34 @@
 				savedProduct() {
 					return store.vue.state.products["{{ product.id }}"]
 				},
+        isCartLoading() {
+          return store.vue.state.cart.loading;
+        },
       },
       methods: {
         async addToCart(event) {
           event.preventDefault();
+
+          this.isCartUpdating = true;
 
           const item = {
             id: this.variantId,
             quantity: 1,
           };
 
-          store.vue.addToCart(item);
+          store.vue.addToCart(item).then(() => {
+            this.isCartUpdating = false;
+            store.saveState();
+          });
         },
 				async getProductData() {
 					const product = this.savedProduct ? this.savedProduct :	null;
 
 					if (product && store.vue.isFresh(product.timestamp)) {
-
-						return this.mapProductData(product);
+            this.mapProductData(product);
 					} else {
 						const data = await this.fetchProductData();
-						return this.mapProductData(data);
+						this.mapProductData(data);
 					}
 				},
 				mapProductData(data) {
@@ -145,14 +164,22 @@
         },
       },
     }).mount("#product-card-form-{{ product.id }}")
-	};
+	});
 
     
-  store.vue.components.push(productCardComponent[{{ product.id }}]);
+  // store.vue.components.push(productCardComponent[{{ product.id }}]);
 </script>
 
 <style scoped>
   .selected-option {
     text-decoration: line-through;
+  }
+
+  .v-enter-active {
+    animation: fade .2s forwards;
+  }
+
+  .v-leave-active {
+    animation: fade .2s reverse;
   }
 </style>
