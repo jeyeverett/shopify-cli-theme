@@ -18,6 +18,8 @@ module.exports = {
       display: ["group-hover"],
       margin: ["last"],
       inset: ["hover"],
+      transform: ["group-hover"],
+      scale: ["group-hover"],
     },
   },
   plugins: [],
