@@ -838,6 +838,10 @@ video {
   height: 15rem;
 }
 
+.h-72 {
+  height: 18rem;
+}
+
 .h-80 {
   height: 20rem;
 }
@@ -1229,6 +1233,10 @@ video {
      object-position: center;
 }
 
+.p-2 {
+  padding: 0.5rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -1465,6 +1473,10 @@ video {
   opacity: 1;
 }
 
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
 *, ::before, ::after {
   --tw-shadow: 0 0 #0000;
 }
@@ -1517,6 +1529,10 @@ video {
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
 }
 
 .duration-500 {
@@ -1814,6 +1830,10 @@ video {
 
   .sm\:mt-4 {
     margin-top: 1rem;
+  }
+
+  .sm\:mb-2 {
+    margin-bottom: 0.5rem;
   }
 
   .sm\:mb-8 {

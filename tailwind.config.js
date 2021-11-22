@@ -20,6 +20,7 @@ module.exports = {
       inset: ["hover"],
       transform: ["group-hover"],
       scale: ["group-hover"],
+      opacity: ["group-hover"],
     },
   },
   plugins: [],

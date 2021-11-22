@@ -1,0 +1,126 @@
+{% if section.settings.title != blank %}
+	<h1 class="text-center text-gray-700 text-2xl lg:text-3xl xl:text-4xl mb-4" itemprop="headline">
+		{{- section.settings.title -}}
+	</h1>
+{% endif %}
+
+{% form 'contact' %}
+	<div class="mb-10 px-4 sm:px-10 flex flex-col items-center justify-center">
+		{% render 'form-feedback', form: form %}
+		<div 
+			class="w-full sm:w-3/4 xl:w-1/2 flex flex-col my-4 p-2">
+			<div class="w-full grid grid-cols-1 md:grid-cols-2 md:gap-2
+				{% if section.settings.show_border_top %}
+					pt-4
+					border-t-4
+					border-gray-300
+				{% endif %}
+				"
+			>
+				<span class="mb-1 sm:mb-2">
+					<label
+						for="contact_name"
+						class="text-gray-500 uppercase tracking-wide font-medium text-sm"
+					>
+						Name
+					</label>
+					<input
+						type="text"
+						name="contact[name]"
+						id="contact_name"
+						class="w-full border border-gray-300 py-1 px-2 shadow text-gray-500"
+					/>
+				</span>
+
+				<span class="mb-1 sm:mb-2">
+					<label
+						for="contact_email"
+						class="text-gray-500 uppercase tracking-wide font-medium text-sm"
+					>
+						Email
+					</label>
+					<input
+						type="email"
+						name="contact[email]"
+						id="contact_email"
+						class="w-full border border-gray-300 py-1 px-2 shadow text-gray-500"
+					/>
+				</span>
+			</div>
+
+			<span class="my-1 sm:my-2">
+				<label
+					for="contact_body"
+					class="text-gray-500 uppercase tracking-wide font-medium text-sm"
+				>
+					Message
+				</label>
+				<textarea
+					type="text"
+					id="contact_body"
+					name="contact[body]"
+					class="
+						w-full
+						border
+						h-40
+						border-gray-300
+						py-1
+						px-2
+						shadow
+						text-gray-500
+						resize-none
+					"
+					placeholder="Write your message here..."
+					required
+				></textarea>
+			</span>
+			<input
+				type="submit"
+				class="
+					px-4
+					py-2
+					text-white
+					bg-gray-500
+					border border-gray-500
+					shadow
+					hover:text-gray-500 hover:bg-white
+					transition-colors
+					mt-5
+					cursor-pointer
+					w-full
+				"
+				value="{{ section.settings.submit_text }}"
+			/>
+		</div>
+	</div>
+{% endform %}
+
+{% schema %} 
+{ 
+	"name": "Contact Form", 
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "show_border_top",
+			"default": true,
+			"label": "Show contact form top border"
+		},
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Contact form title"
+		},
+		{
+			"type": "text",
+			"id": "submit_text",
+			"default": "Send message",
+			"label": "Contact form submit text"
+		}
+	],
+	"presets": [ 
+		{ 
+			"name":"Contact Form" 
+		} 
+	]
+} 
+{% endschema %}
