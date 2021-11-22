@@ -6,13 +6,13 @@
 	{% render 'cart-table' %}
   {% else %}
     <div class="flex flex-col justify-center items-center">
-			<h4 class="font-light text-xl mt-4 mb-12">Your cart is empty</h4>
-			<a 
-				href="{{ routes.all_products_collection_url }}"
-				class="px-4 py-2 text-white bg-gray-500 border border-gray-500 shadow hover:text-gray-500 hover:bg-white transition-colors"
-			>
-				Continue shopping
-			</a>
+		<h4 class="font-light text-xl mt-4 mb-12">Your cart is empty</h4>
+		<a 
+			href="{{ routes.all_products_collection_url }}"
+			class="px-4 py-2 text-white bg-gray-500 border border-gray-500 rounded-sm shadow hover:text-gray-500 hover:bg-white transition-colors"
+		>
+			Continue shopping
+		</a>
     </div>
   {% endif %}
 </section>

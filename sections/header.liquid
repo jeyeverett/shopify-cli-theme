@@ -1,5 +1,5 @@
 <header class="bg-white xs:fixed w-full top-0 left-0 z-10" id="header">
-  <div class="relative border-b-2 border-gray-300 xs:border-b-0">
+  <div class="relative pb-1 xs:pb-0 border-b-2 border-gray-300 xs:border-b-0">
     <nav class="flex w-full">
       {% render 'nav-feature' %}
     </nav>
@@ -62,16 +62,21 @@
       <nav
         class="hide-element mt-2 sm:mt-4 px-6 w-5/6 xs:flex justify-center mx-auto relative"
         :class="{ 'show-element': isSearchVisible }"
-        id="search-modal"
         v-else
       >
-        <input 
-          type="text" 
-          style="height: 38px;" 
-          class="w-full border border-gray-300 px-4 text-center shadow text-gray-500 relative z-10" 
-          placeholder="type your search here..." 
-          @input="onSearch" 
-          v-model="search">
+        <span class="relative w-full rounded-sm">
+          <input 
+            type="search" 
+            style="height: 38px;" 
+            class="w-full border border-gray-300 px-4 text-center shadow text-gray-500 relative z-10 rounded-sm" 
+            placeholder="type your search here..." 
+            id="search-modal"
+            @input="onSearch" 
+            v-model="search">
+            <span class="hidden sm:block absolute top-2 left-2 z-20 pr-2 border-r border-gray-300">
+              {% render 'icon-search' %}
+            </span>
+        </span>
       </nav>
     </transition>
     <div 
@@ -168,8 +173,7 @@
       focusSearch() {
         const searchModal = document.getElementById('search-modal');
         if (searchModal) {
-          const search = searchModal.firstChild;
-          search.focus();
+          searchModal.focus();
         }
       },
       onSearch() {

@@ -118,10 +118,14 @@
         },
 				async getProductData() {
 					const product = this.savedProduct ? this.savedProduct :	null;
+          console.log(product);
 
 					if (product && store.vue.isFresh(product.timestamp)) {
+            console.log('product is fresh')
             this.mapProductData(product);
 					} else {
+            console.log('product is stale')
+
 						const data = await this.fetchProductData();
 						this.mapProductData(data);
 					}

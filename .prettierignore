@@ -5,6 +5,7 @@ sections/template-404.liquid
 sections/template-article.liquid
 sections/template-blog.liquid
 sections/template-cart.liquid
+sections/template-collection.liquid
 
 snippets/cart.liquid
 snippets/nav-feature.liquid
