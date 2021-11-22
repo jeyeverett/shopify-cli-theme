@@ -1,0 +1,108 @@
+<section
+  class="
+    px-6
+    pt-2
+    xs:pt-4
+    sm:py-8 sm:px-12
+    flex flex-col
+    items-center
+    justify-center
+  "
+>
+  <h1 class="text-gray-700 text-2xl lg:text-3xl xl:text-4xl mb-4 sm:mb-8">
+    {{ section.settings.title }}
+  </h1>
+  <div
+    class="
+      w-full
+      sm:w-5/6
+      md:w-3/4
+      xl:w-2/3
+      mx-auto
+      grid grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      row-auto
+      gap-8
+      mb-8
+    "
+  >
+    <!-- prettier-ignore -->
+		{% if section.settings.use_pagination %}
+    	{% paginate section.settings.featured_collection.products by section.settings.pagination %}
+				{% for product in section.settings.featured_collection.products %}
+					{% assign show_vendor = section.settings.show_vendor %}
+					{% render 'product-card', product: product, show_vendor: show_vendor %}
+				{% else %}
+					{% for item in (1..3) %}
+						{% render 'product-card-placeholder' %}
+					{% endfor %}
+				{% endfor %}
+				<span class="col-span-1 sm:col-span-2 lg:col-span-3">
+					{% render 'pagination', pagination: paginate %}
+				</span>
+			{% endpaginate %}
+		{% else %}
+			{% for product in section.settings.featured_collection.products limit: section.settings.limit %}
+				{% assign show_vendor = section.settings.show_vendor %}
+				{% render 'product-card', product: product, show_vendor: show_vendor %}
+			{% else %}
+				{% for item in (1..3) %}
+					{% render 'product-card-placeholder' %}
+				{% endfor %}
+			{% endfor %}
+		{% endif %}
+  </div>
+</section>
+
+
+
+{% schema %}
+{
+	"name": "Featured Collection",
+	"settings": [
+		{
+				"type": "text",
+				"id": "title",
+				"default": "Featured Collection",
+				"label": "Collection title"
+		},
+		{
+				"type": "collection",
+				"id": "featured_collection",
+				"label": "Featured collection"
+		},
+		{
+				"type": "checkbox",
+				"id": "show_vendor",
+				"default": true,
+				"label": "Show vendor on product card"
+		},
+		{
+				"type": "number",
+				"id": "pagination",
+				"default": 3,
+				"label": "Featured products per page (with pagination)"
+		},
+		{
+			"type": "checkbox",
+			"id": "use_pagination",
+			"default": false,
+			"label": "Paginate featured collection"
+		},
+		{
+			"type": "range",
+			"id": "limit",
+			"default": 3,
+			"min": 3,
+			"max": 12,
+			"label": "Limit featured collection items (without pagination)"
+		}
+	],
+	"presets": [
+		{
+			"name":"Featured Collection"
+		}
+	]
+}
+{% endschema %}

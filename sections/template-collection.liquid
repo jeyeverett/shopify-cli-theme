@@ -29,11 +29,11 @@
   >
     <!-- prettier-ignore -->
     {% paginate collection.products by section.settings.pagination %}
-        {% for product in collection.products %}
-            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %} 
-        {% else %}
-    <p>There are no products inside of this collection</p>
-    {% endfor %}
+      {% for product in collection.products %}
+          {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %} 
+      {% else %}
+        <p>There are no products inside of this collection</p>
+      {% endfor %}
     <span class="col-span-1 sm:col-span-2 lg:col-span-3">
       {% render 'pagination', pagination: paginate %}
     </span>
@@ -45,17 +45,17 @@
 {
     "name": "Template Collection",
     "settings": [
-        {
-            "type": "number",
-            "id": "pagination",
-            "default": 6,
-            "label": "Number of products per page"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_vendor",
-          "default": true,
-          "label": "Show vendor on product card"
+      {
+          "type": "number",
+          "id": "pagination",
+          "default": 6,
+          "label": "Number of products per page"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "default": true,
+        "label": "Show vendor on product card"
       }
     ]
 }
