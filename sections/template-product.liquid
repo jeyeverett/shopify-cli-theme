@@ -1,0 +1,72 @@
+<section
+  class="
+    grid grid-cols-1
+    md:grid-cols-2
+    mx-auto
+    mb-10
+    mt-5
+    sm:mt-10
+		px-6 pt-2 xs:pt-4 sm:py-8 lg:px-12
+  "
+>
+	<figure class="h-full w-full sm:w-3/4 md:w-full xl:w-3/4 mx-auto relative select-none">
+		<div class="h-full relative swiper swiper-{{- product.id -}}">
+			<div class="h-full swiper-wrapper">
+				{% for media in product.media %}
+					{% render 'product-media', media: media %}
+				{% endfor %}
+			</div>
+			<span
+				class="absolute top-0 right-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-next swiper-button-next-{{ product.id }} hover:text-gray-700 swipe-icon"
+			></span>
+			<span
+				class="absolute top-0 left-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-prev swiper-button-prev-{{ product.id }} hover:text-gray-700 swipe-icon"
+			></span>
+		</div>
+  </figure>
+
+  <article
+    class="
+      mx-auto
+			p-6
+      sm:p-0
+      w-full
+      sm:w-3/4
+      md:w-5/6
+      lg:w-3/4
+      flex flex-col
+      justify-between
+    "
+  >
+    <div>
+      <h1 class="sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
+        {{ product.title }}
+      </h1>
+
+      <p class="text-justify mt-1 lg:mt-2 text-gray-700">
+        {{ product.description }}
+      </p>
+    </div>
+    {% render 'product-form', product: product %}
+  </article>
+</section>
+
+<script>
+  new Swiper(".swiper-{{- product.id -}}", {
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 0,
+    loop: true,
+
+    breakpoints: {
+      600: {
+        allowTouchMove: false,
+        speed: 0,
+        navigation: {
+          nextEl: ".swiper-button-next-{{- product.id -}}",
+          prevEl: ".swiper-button-prev-{{- product.id -}}",
+        },
+      },
+    },
+  });
+</script>

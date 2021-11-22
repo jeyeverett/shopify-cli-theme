@@ -1,0 +1,185 @@
+<form id="product-form">
+  <div v-if="isCartLoading" class="flex justify-center items-center h-40">
+    {% render 'spinner' %}
+  </div>
+  <div v-else>
+    <ul
+      v-for="(option, optionIndex) in form.options"
+      :key="option.name"
+      :class="['my-2 w-full px-4 py-2 border border-gray-700 bg-white hover:bg-gray-200 transition-colors cursor-pointer relative', { 'bg-gray-200': option.visible }]"
+    >
+      {% render 'product-option-select' %}
+    </ul>
+    <button
+      class="
+        px-4
+        py-2
+        border border-gray-700
+        rounded-sm
+        bg-gray-700
+        text-white
+        hover:bg-transparent hover:text-gray-700
+        transition-all
+        w-full
+      "
+      @click="addToCart"
+      style="opacity: 0"
+      :style="{ opacity: isCartLoading ? 0 : 1 }"
+      :class="{ 'pointer-events-none': isCartUpdating }"
+    >
+      <transition mode="out-in">
+        <div v-if="isCartUpdating" class="flex justify-center items-center h-6">
+          <span class="relative">
+            <span class="invisible">Add to cart</span>
+            <span
+              class="absolute -top-2 left-5 flex items-center justify-center"
+            >
+              {% render 'spinner-small' %}
+            </span>
+          </span>
+        </div>
+        <span v-else>Add to cart</span>
+      </transition>
+    </button>
+  </div>
+</form>
+
+<script>
+  store.vue.components.push(async () => {
+    Vue.createApp({
+      delimiters: ["${", "}"],
+      data() {
+        return {
+          variantsMap: {}, //map variant title to variant id
+          form: {
+            options: [],
+            selected: {},
+          },
+          isCartUpdating: false,
+        };
+      },
+      created() {
+        store.vue.cartLoading(true);
+        this.getProductData().then(() => {
+          store.vue.cartLoading(false);
+        });
+      },
+      computed: {
+        variantId() {
+          //generate the variant title for lookup in the variantsMap
+          const variantTitle = Object.values(this.form.selected).reduce(
+            (acc, selection) => acc + " / " + selection
+          );
+          return this.variantsMap[variantTitle];
+        },
+        savedProduct() {
+          return store.vue.state.products["{{ product.id }}"];
+        },
+        isCartLoading() {
+          return store.vue.state.cart.loading;
+        },
+      },
+      methods: {
+        async addToCart(event) {
+          event.preventDefault();
+
+          this.isCartUpdating = true;
+
+          const item = {
+            id: this.variantId,
+            quantity: 1,
+          };
+
+          store.vue.addToCart(item).then(() => {
+            this.isCartUpdating = false;
+            store.saveState();
+          });
+        },
+        async getProductData() {
+          const product = this.savedProduct ? this.savedProduct : null;
+
+          if (product && store.vue.isFresh(product.timestamp)) {
+            this.mapProductData(product);
+          } else {
+            const data = await this.fetchProductData();
+            this.mapProductData(data);
+          }
+        },
+        mapProductData(data) {
+          data.variants.map(
+            (variant) => (this.variantsMap[variant.title] = variant.id)
+          );
+
+          //map product options to form
+          data.options.forEach((option) => {
+            this.form.options.push({
+              ...option,
+              visible: false,
+            });
+            // sets the default selected option for each option
+            this.form.selected[option.name] = option.values[0];
+          });
+        },
+        async fetchProductData() {
+          try {
+            return await store.vue.getProductData("{{ product.handle }}");
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        toggleOptionsList(option) {
+          option.visible = !option.visible;
+        },
+        closeOptions() {
+          this.form.options.forEach((option) => (option.visible = false));
+        },
+        updateSelected(option, value) {
+          this.form.selected[option.name] = value;
+          option.visible = false;
+        },
+      },
+    }).mount("#product-form");
+  });
+</script>
+
+<style>
+  .option-item:last-child {
+    border-bottom: 1px solid rgba(55, 65, 81, 1);
+  }
+
+  .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid darkgrey;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkgrey transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

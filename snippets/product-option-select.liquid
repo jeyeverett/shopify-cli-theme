@@ -1,0 +1,43 @@
+<li
+  @click="toggleOptionsList(option)"
+  class="text-center relative"
+  style="opacity: 0"
+  :style="{ opacity: isCartLoading ? 0 : 1 }"
+>
+  <span class="absolute left-0 text-gray-700">${option.name}:</span
+  ><span class="font-light text-gray-700">${form.selected[option.name]}</span>
+</li>
+<ul
+  v-show="option.visible"
+  class="absolute left-0 bottom-full w-full select-none"
+>
+  <li
+    v-for="(value, index) in option.values"
+    :key="value"
+    @click="updateSelected(option, value)"
+    class="
+      w-full
+      px-4
+      py-2
+      border-t border-l border-r border-gray-700
+      bg-white
+      hover:bg-gray-200
+      cursor-pointer
+      box-border
+      transition-colors
+      text-gray-700
+      option-item
+      text-center
+      relative
+      z-10
+    "
+  >
+    ${value}
+  </li>
+</ul>
+<div
+  class="hide-backdrop cursor-default"
+  :class="{ 'show-backdrop': option.visible }"
+  v-show="option.visible"
+  @click="closeOptions"
+></div>
