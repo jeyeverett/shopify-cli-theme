@@ -1,23 +1,30 @@
 <article
-  class="p-4 flex flex-col h-44 relative"
+  class="p-4 flex flex-col h-48 relative"
   id="product-card-form-{{ product.id }}"
 >
-  <span>
-    <h3 class="text-gray-700 font-medium">
-      <a href="{{ product.url | within: collection }}">
-        {{ product.title | upcase | truncate: 30 }}
-      </a>
-    </h3>
-
-    <p class="my-2 text-gray-700 font-medium text-right">{{ product.price | money }}</p>
+  <span class="flex flex-col">
+    {% if show_vendor %}
+      <h4 class="text-xs font-medium tracking-wide text-gray-500">
+        {% assign vendor = product.vendor | split: '-' %}
+        {{ vendor[0] | upcase | truncate: 13 }}
+      </h4>
+    {% endif %}
+    <span class="flex justify-between">
+      <h3 class="text-gray-700 font-medium">
+        <a href="{{ product.url | within: collection }}">
+          {{ product.title | truncate: 30 }}
+        </a>
+      </h3>
+      <p class="text-gray-700 font-medium text-right">{{ product.price | money }}</p>
+    </span>
   </span>
 
     <transition mode="out-in">
-      <div v-if="isCartLoading" class="flex justify-center items-center h-10">
+      <div v-if="isCartLoading" class="flex justify-center items-center h-10 mt-6">
         {% render 'spinner' %}
       </div>
       
-      <form v-else>
+      <form v-else class="mt-2">
         <ul
           v-for="(option, optionIndex) in form.options"
           :key="variantId + '-' + option.name"

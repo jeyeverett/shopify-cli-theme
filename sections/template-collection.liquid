@@ -30,7 +30,7 @@
     <!-- prettier-ignore -->
     {% paginate collection.products by section.settings.pagination %}
         {% for product in collection.products %}
-            {% render 'product-card', product: product %} 
+            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %} 
         {% else %}
     <p>There are no products inside of this collection</p>
     {% endfor %}
@@ -50,7 +50,13 @@
             "id": "pagination",
             "default": 6,
             "label": "Number of products per page"
-        }
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "default": true,
+          "label": "Show vendor on product card"
+      }
     ]
 }
 {% endschema %}
