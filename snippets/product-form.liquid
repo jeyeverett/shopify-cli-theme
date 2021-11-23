@@ -1,21 +1,67 @@
-<form id="product-form">
+<form id="product-form" class="mt-2 md:mt-0">
   <div v-if="isCartLoading" class="flex justify-center items-center h-40">
     {% render 'spinner' %}
   </div>
   <div v-else>
-    <ul
+    <div style="opacity: 0" :style="{ opacity: isCartLoading ? 0 : 1 }">
+      <div
+        class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
+        v-if="!isOnSale"
+      >
+        @{ toPrice(getPrice.price) }
+      </div>
+      <div
+        class="
+          font-medium
+          text-base
+          md:text-lg
+          lg:text-xl
+          text-gray-700
+          flex
+          justify-between
+          items-center
+        "
+        v-else
+      >
+        <span>
+          <span class="text-gray-500 line-through text-base">
+            @{ toPrice(getPrice.price) }
+          </span>
+          <span class="pl-1 text-gray-700">
+            @{ toPrice(getPrice.compare_at_price) }
+          </span>
+        </span>
+        <span
+          class="
+            px-2
+            py-1
+            border border-red-600
+            bg-red-500
+            rounded
+            text-white text-sm
+            font-normal
+            uppercase
+            tracking-wider
+          "
+        >
+          Sale
+        </span>
+      </div>
+    </div>
+    <div
       v-for="(option, optionIndex) in form.options"
       :key="option.name"
-      :class="['my-2 w-full px-4 py-2 border border-gray-700 bg-white hover:bg-gray-200 transition-colors cursor-pointer relative', { 'bg-gray-200': option.visible }]"
+      :class="['my-2 w-full px-4 py-2 border border-gray-500 bg-white hover:bg-gray-200 rounded-sm transition-colors cursor-pointer relative select-none shadow', { 'bg-gray-200': option.visible }]"
     >
       {% render 'product-option-select' %}
-    </ul>
+    </div>
     <button
       class="
         px-4
         py-2
         border border-gray-700
         rounded-sm
+        shadow
         bg-gray-700
         text-white
         hover:bg-transparent hover:text-gray-700
@@ -47,7 +93,7 @@
 <script>
   store.vue.components.push(async () => {
     Vue.createApp({
-      delimiters: ["${", "}"],
+      delimiters: ["@{", "}"],
       data() {
         return {
           variantsMap: {}, //map variant title to variant id
@@ -74,6 +120,24 @@
         },
         savedProduct() {
           return store.vue.state.products["{{ product.id }}"];
+        },
+        getPrice() {
+          const price = {};
+          this.savedProduct.variants.forEach((variant) => {
+            if (variant.id === this.variantId) {
+              price.compare_at_price = variant.compare_at_price;
+              price.price = variant.price;
+            }
+          });
+          return price;
+        },
+        isOnSale() {
+          const { price, compare_at_price } = this.getPrice;
+          if (compare_at_price && compare_at_price < price) {
+            return true;
+          } else {
+            return false;
+          }
         },
         isCartLoading() {
           return store.vue.state.cart.loading;
@@ -136,6 +200,9 @@
         updateSelected(option, value) {
           this.form.selected[option.name] = value;
           option.visible = false;
+        },
+        toPrice(price) {
+          return "$" + (price / 100).toFixed(2);
         },
       },
     }).mount("#product-form");

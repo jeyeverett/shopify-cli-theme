@@ -16,12 +16,15 @@
 					{% render 'product-media', media: media %}
 				{% endfor %}
 			</div>
-			<span
-				class="absolute top-0 right-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-next swiper-button-next-{{ product.id }} hover:text-gray-700 swipe-icon"
-			></span>
-			<span
-				class="absolute top-0 left-0 w-1/4 h-full mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-prev swiper-button-prev-{{ product.id }} hover:text-gray-700 swipe-icon"
-			></span>
+			<div class="relative">
+				<span
+					class="z-20 hidden xs:flex absolute -top-12 right-0 h-10 w-1/4 mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-next swiper-button-next-{{ product.id }} hover:text-gray-700 swipe-icon"
+				></span>
+				<span
+					class="z-20 hidden xs:flex absolute -top-12 left-0 w-1/4 mt-0 outline-none shadow-none border-transparent transition-colors swiper-button-prev swiper-button-prev-{{ product.id }} hover:text-gray-700 swipe-icon"
+				></span>
+				<span class="swiper-pagination"></span>
+			</div>
 		</div>
   </figure>
 
@@ -29,7 +32,7 @@
     class="
       mx-auto
 			p-6
-      sm:p-0
+      md:p-0
       w-full
       sm:w-3/4
       md:w-5/6
@@ -39,9 +42,9 @@
     "
   >
     <div>
-      <h1 class="sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
-        {{ product.title }}
-      </h1>
+			<h1 class="sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
+				{{ product.title }}
+			</h1>
 
       <p class="text-justify mt-1 lg:mt-2 text-gray-700">
         {{ product.description }}
@@ -57,6 +60,9 @@
     centeredSlides: true,
     spaceBetween: 0,
     loop: true,
+		pagination: {
+			el: '.swiper-pagination'
+		},
 
     breakpoints: {
       600: {

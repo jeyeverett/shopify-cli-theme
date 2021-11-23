@@ -1,15 +1,20 @@
-<li
+<div
   @click="toggleOptionsList(option)"
   class="text-center relative"
   style="opacity: 0"
   :style="{ opacity: isCartLoading ? 0 : 1 }"
 >
-  <span class="absolute left-0 text-gray-700">${option.name}:</span
-  ><span class="font-light text-gray-700">${form.selected[option.name]}</span>
-</li>
+  <span
+    class="absolute left-0 text-gray-700 uppercase tracking-wide font-medium"
+  >
+    @{option.name}
+  </span>
+  <span class="text-gray-700">@{form.selected[option.name]}</span>
+</div>
 <ul
   v-show="option.visible"
-  class="absolute left-0 bottom-full w-full select-none"
+  class="absolute left-0 w-full select-none bg-white rounded-sm"
+  style="bottom: 102%; width: 104%; left: -2%"
 >
   <li
     v-for="(value, index) in option.values"
@@ -19,9 +24,14 @@
       w-full
       px-4
       py-2
-      border-t border-l border-r border-gray-700
+      my-2
+      border border-gray-700
+      rounded-sm
+      shadow
       bg-white
       hover:bg-gray-200
+      transform
+      scale-95
       cursor-pointer
       box-border
       transition-colors
@@ -32,7 +42,7 @@
       z-10
     "
   >
-    ${value}
+    @{value}
   </li>
 </ul>
 <div

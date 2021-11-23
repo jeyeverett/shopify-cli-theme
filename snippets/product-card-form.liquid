@@ -4,7 +4,7 @@
 >
   <span class="flex flex-col">
     {% if show_vendor %}
-      <h4 class="text-xs font-medium tracking-wide text-gray-500">
+      <h4 class="text-xs font-medium tracking-wider text-gray-500 -mb-1">
         {% assign vendor = product.vendor | split: '-' %}
         {{ vendor[0] | upcase | truncate: 13 }}
       </h4>
