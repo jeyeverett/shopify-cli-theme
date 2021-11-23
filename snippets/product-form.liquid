@@ -1,93 +1,89 @@
-<form id="product-form" class="mt-2 md:mt-0">
-  <div v-if="isCartLoading" class="flex justify-center items-center h-40">
-    {% render 'spinner' %}
-  </div>
-  <div v-else>
-    <div style="opacity: 0" :style="{ opacity: isCartLoading ? 0 : 1 }">
+<form
+  id="product-form"
+  class="mt-2 md:mt-0 relative h-40"
+  :class="{ 'h-auto': !isCartLoading}"
+>
+  <transition mode="out-in">
+    <div v-if="isCartLoading" class="text-center">{% render 'spinner' %}</div>
+    <div v-else>
       <div
-        class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
-        v-if="!isOnSale"
+        style="opacity: 0; height: 0"
+        :style="{ opacity: isCartLoading ? 0 : 1, height: isCartLoading ? 0 : 'auto' }"
       >
-        @{ toPrice(getPrice.price) }
-      </div>
-      <div
-        class="
-          font-medium
-          text-base
-          md:text-lg
-          lg:text-xl
-          text-gray-700
-          flex
-          justify-between
-          items-center
-        "
-        v-else
-      >
-        <span>
-          <span class="text-gray-500 line-through text-base">
-            @{ toPrice(getPrice.price) }
-          </span>
-          <span class="pl-1 text-gray-700">
-            @{ toPrice(getPrice.compare_at_price) }
-          </span>
-        </span>
-        <span
-          class="
-            px-2
-            py-1
-            border border-red-600
-            bg-red-500
-            rounded
-            text-white text-sm
-            font-normal
-            uppercase
-            tracking-wider
-          "
+        <div
+          class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
+          v-if="!isOnSale"
         >
-          Sale
-        </span>
-      </div>
-    </div>
-    <div
-      v-for="(option, optionIndex) in form.options"
-      :key="option.name"
-      :class="['my-2 w-full px-4 py-2 border border-gray-500 bg-white hover:bg-gray-200 rounded-sm transition-colors cursor-pointer relative select-none shadow', { 'bg-gray-200': option.visible }]"
-    >
-      {% render 'product-option-select' %}
-    </div>
-    <button
-      class="
-        px-4
-        py-2
-        border border-gray-700
-        rounded-sm
-        shadow
-        bg-gray-700
-        text-white
-        hover:bg-transparent hover:text-gray-700
-        transition-all
-        w-full
-      "
-      @click="addToCart"
-      style="opacity: 0"
-      :style="{ opacity: isCartLoading ? 0 : 1 }"
-      :class="{ 'pointer-events-none': isCartUpdating }"
-    >
-      <transition mode="out-in">
-        <div v-if="isCartUpdating" class="flex justify-center items-center h-6">
-          <span class="relative">
-            <span class="invisible">Add to cart</span>
-            <span
-              class="absolute -top-2 left-5 flex items-center justify-center"
-            >
-              {% render 'spinner-small' %}
+          @{ toPrice(getPrice.price) }
+        </div>
+        <div
+          class="
+            font-medium
+            text-base
+            md:text-lg
+            lg:text-xl
+            text-gray-700
+            flex
+            justify-between
+            items-center
+          "
+          v-else
+        >
+          <span>
+            <span class="text-gray-500 line-through text-base">
+              @{ toPrice(getPrice.price) }
+            </span>
+            <span class="pl-1 text-gray-700">
+              @{ toPrice(getPrice.compare_at_price) }
             </span>
           </span>
+          {% render 'badge-sale' %}
         </div>
-        <span v-else>Add to cart</span>
-      </transition>
-    </button>
-  </div>
+      </div>
+      <div
+        v-for="(option, optionIndex) in form.options"
+        :key="option.name"
+        :class="['my-2 w-full px-4 py-2 border border-gray-500 bg-white hover:bg-gray-200 rounded-sm transition-colors cursor-pointer relative select-none shadow', { 'bg-gray-200': option.visible }]"
+      >
+        {% render 'product-option-select' %}
+      </div>
+      <button
+        class="
+          px-4
+          py-2
+          border border-gray-700
+          rounded-sm
+          shadow
+          bg-gray-700
+          text-white
+          hover:bg-transparent hover:text-gray-700
+          transition-all
+          w-full
+        "
+        @click="addToCart"
+        style="opacity: 0"
+        :style="{ opacity: isCartLoading ? 0 : 1 }"
+        :class="{ 'pointer-events-none': isCartUpdating }"
+      >
+        <transition mode="out-in">
+          <div
+            v-if="isCartUpdating"
+            class="flex justify-center items-center h-6"
+          >
+            <span class="relative">
+              <span class="invisible">Add to cart</span>
+              <span
+                class="absolute -top-2 left-5 flex items-center justify-center"
+              >
+                {% render 'spinner-small' %}
+              </span>
+            </span>
+          </div>
+          <span v-else>Add to cart</span>
+        </transition>
+      </button>
+    </div>
+  </transition>
 </form>
 
 <script>
@@ -212,6 +208,14 @@
 <style>
   .option-item:last-child {
     border-bottom: 1px solid rgba(55, 65, 81, 1);
+  }
+
+  .v-enter-active {
+    animation: fade 0.2s forwards;
+  }
+
+  .v-leave-active {
+    animation: fade 0.2s reverse;
   }
 
   .lds-ring {

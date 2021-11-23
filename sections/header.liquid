@@ -270,6 +270,35 @@
     animation: quantity-icon-hover .2s forwards;
   }
 
+  .cart-list-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+  }
+  .cart-list-enter-active {
+    transition: all .2s ease-out;
+  }
+  .cart-list-enter-to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .cart-list-leave-from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .cart-list-leave-active {
+    transition: all .2s ease-out;
+    position: absolute;
+  }
+  .cart-list-leave-to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  
+  .cart-list-move {
+    transition: transform 0.2s ease;
+  }
+
   @keyframes quantity-icon-hover {
     100% {
       background-color: rgba(55, 65, 81, .1);
@@ -313,39 +342,6 @@
 
   .nested-link-animation-in {
     animation: animate-modal-left .2s forwards;
-  }
-
-  @keyframes animate-modal-right {
-    from {
-      right: 0;
-      opacity: 0;
-    }
-    to {
-      right: 2rem;
-      opacity: 1;
-    }
-  }
-
-  @keyframes animate-modal-left {
-    from {
-      left: 0;
-      opacity: 0;
-    }
-    to {
-      left: 2rem;
-      opacity: 1;
-    }
-  }
-
-  @keyframes animate-modal-top {
-    from {
-      transform: translateY(-2rem);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
   }
 </style>
 

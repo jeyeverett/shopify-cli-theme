@@ -16,7 +16,7 @@ module.exports = {
   variants: {
     extend: {
       display: ["group-hover"],
-      margin: ["last"],
+      margin: ["first", "last"],
       inset: ["hover"],
       transform: ["group-hover"],
       scale: ["group-hover"],

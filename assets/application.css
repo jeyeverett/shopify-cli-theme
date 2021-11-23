@@ -634,16 +634,16 @@ video {
   bottom: 1.25rem;
 }
 
+.bottom-full {
+  bottom: 100%;
+}
+
 .left-0 {
   left: 0px;
 }
 
 .left-2 {
   left: 0.5rem;
-}
-
-.left-3 {
-  left: 0.75rem;
 }
 
 .left-5 {
@@ -664,6 +664,10 @@ video {
 
 .z-20 {
   z-index: 20;
+}
+
+.z-50 {
+  z-index: 50;
 }
 
 .order-last {
@@ -720,10 +724,6 @@ video {
 
 .mt-5 {
   margin-top: 1.25rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
 }
 
 .mt-16 {
@@ -842,10 +842,6 @@ video {
   height: 10rem;
 }
 
-.h-48 {
-  height: 12rem;
-}
-
 .h-60 {
   height: 15rem;
 }
@@ -856,6 +852,10 @@ video {
 
 .h-80 {
   height: 20rem;
+}
+
+.h-auto {
+  height: auto;
 }
 
 .h-full {
@@ -1360,6 +1360,10 @@ video {
   padding-left: 0.25rem;
 }
 
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1433,6 +1437,10 @@ video {
 
 .capitalize {
   text-transform: capitalize;
+}
+
+.leading-none {
+  line-height: 1;
 }
 
 .leading-relaxed {
@@ -1695,6 +1703,102 @@ video {
 
   from {
     opacity: 0;
+  }
+}
+
+@-webkit-keyframes animate-modal-right {
+  from {
+    right: 0;
+    opacity: 0;
+  }
+
+  to {
+    right: 2rem;
+    opacity: 1;
+  }
+}
+
+@keyframes animate-modal-right {
+  from {
+    right: 0;
+    opacity: 0;
+  }
+
+  to {
+    right: 2rem;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes animate-modal-left {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+
+  to {
+    left: 2rem;
+    opacity: 1;
+  }
+}
+
+@keyframes animate-modal-left {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+
+  to {
+    left: 2rem;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes animate-modal-top {
+  from {
+    transform: translateY(-2rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes animate-modal-top {
+  from {
+    transform: translateY(-2rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes animate-modal-bottom {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes animate-modal-bottom {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 

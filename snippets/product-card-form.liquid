@@ -1,8 +1,12 @@
 <article
-  class="p-4 flex flex-col h-48 relative"
+  class="p-4 flex flex-col relative"
   id="product-card-form-{{ product.id }}"
 >
-  <span class="flex flex-col">
+  <span 
+    class="flex flex-col"
+    style="height: 0; opacity: 0;" 
+    :style="{ height: isCartLoading ? 0 : auto, opacity: isCartLoading ? 0 : 1 }"
+  >
     {% if show_vendor %}
       <h4 class="text-xs font-medium tracking-wider text-gray-500 -mb-1">
         {% assign vendor = product.vendor | split: '-' %}
@@ -15,61 +19,102 @@
           {{ product.title | truncate: 30 }}
         </a>
       </h3>
-      <p class="text-gray-700 font-medium text-right pr-1">{{ product.price | money }}</p>
+      <span 
+        class="text-gray-700 font-medium text-right pr-1" 
+
+      >
+        <span
+          class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
+          v-if="!isOnSale"
+        >
+          @{ toPrice(getPrice.price) }
+        </span>
+        <span
+          class="
+            font-medium
+            text-base
+            md:text-lg
+            lg:text-xl
+            text-gray-700
+            flex
+            justify-between
+            items-center
+          "
+          v-else
+        >
+          <span>
+            <span class="text-gray-500 line-through text-base">
+              @{ toPrice(getPrice.price) }
+            </span>
+            <span class="pl-1 text-gray-700">
+              @{ toPrice(getPrice.compare_at_price) }
+            </span>
+          </span>
+          {% render 'badge-sale' %}
+        </span>
+      </span>
     </span>
   </span>
 
-    <transition mode="out-in">
-      <div v-if="isCartLoading" class="flex justify-center items-center h-10 mt-6">
-        {% render 'spinner' %}
-      </div>
-      
-      <form v-else class="mt-2">
-        <ul
+  <transition mode="out-in">
+    <div 
+      class="text-center"
+      v-if="isCartLoading" 
+    >
+      {% render 'spinner' %}
+    </div>
+    
+    <form 
+      class="mt-2 flex flex-col"
+      style="height: 0;"
+      :style="{ height: isCartLoading ? 0 : 'auto' }"
+      v-else 
+    >
+      <div class="flex flex-col">
+        <div
           v-for="(option, optionIndex) in form.options"
           :key="variantId + '-' + option.name"
+          class="mb-1"
           style="opacity: 0"
           :style="{ opacity: isCartLoading ? 0 : 1 }"
         >
           {% render 'product-card-option-select' %}
-        </ul>
-        <button
-          class="
-            px-4
-            py-2
-            border border-gray-700 rounded-sm
-            bg-gray-700
-            text-white
-            hover:bg-transparent hover:text-gray-700
-            transition-all
-            absolute
-            bottom-3
-            right-3
-          "
-          @click="addToCart"
-          style="opacity: 0"
-          :style="{ opacity: isCartLoading ? 0 : 1 }"
-			    :class="{ 'pointer-events-none': isCartUpdating }"
+        </div>
+      </div>
+      <button
+        class="
+          px-4
+          py-2
+          border border-gray-700 rounded-sm
+          bg-gray-700
+          text-white
+          hover:bg-transparent hover:text-gray-700
+          transition-all
+        "
+        @click="addToCart"
+        style="opacity: 0"
+        :style="{ opacity: isCartLoading ? 0 : 1 }"
+        :class="{ 'pointer-events-none': isCartUpdating }"
+      >
+        <transition 
+          mode="out-in"
         >
-          <transition 
-            mode="out-in"
-          >
-            <div
-              v-if="isCartUpdating"
-              class="flex justify-center items-center h-6"
-            > 
-              <span class="relative">
-                <span class="invisible">Add to cart</span>
-                <span class="absolute -top-2 left-5 flex items-center justify-center">
-                  {% render 'spinner-small' %}
-                </span>
+          <div
+            v-if="isCartUpdating"
+            class="flex justify-center items-center h-6"
+          > 
+            <span class="relative">
+              <span class="invisible">Add to cart</span>
+              <span class="absolute -top-2 left-5 flex items-center justify-center">
+                {% render 'spinner-small' %}
               </span>
-            </div>
-            <span v-else>Add to cart</span>
-          </transition>
-        </button>
-    </transition>
-  </form>
+            </span>
+          </div>
+          <span v-else>Add to cart</span>
+        </transition>
+      </button>
+    </form>
+  </transition>
 </article>
 
 <script>
@@ -99,6 +144,24 @@
             (acc, selection) => acc + " / " + selection
           );
           return this.variantsMap[variantTitle];
+        },
+        getPrice() {
+          const price = {};
+          this.savedProduct.variants.forEach((variant) => {
+            if (variant.id === this.variantId) {
+              price.compare_at_price = variant.compare_at_price;
+              price.price = variant.price;
+            }
+          });
+          return price;
+        },
+        isOnSale() {
+          const { price, compare_at_price } = this.getPrice;
+          if (compare_at_price && compare_at_price < price) {
+            return true;
+          } else {
+            return false;
+          }
         },
 				savedProduct() {
 					return store.vue.state.products["{{ product.id }}"]
@@ -157,6 +220,7 @@
 				},				
 
         toggleOptionsList(option) {
+          this.closeAllOptions();
           option.visible = !option.visible;
         },
         closeAllOptions() {
@@ -168,6 +232,9 @@
         updateSelected(option, value) {
           this.form.selected[option.name] = value;
           option.visible = false;
+        },
+        toPrice(price) {
+          return "$" + (price / 100).toFixed(2);
         },
       },
     }).mount("#product-card-form-{{ product.id }}")
@@ -182,11 +249,19 @@
     text-decoration: line-through;
   }
 
+  .select-option-enter-active {
+    animation: animate-modal-bottom .2s forwards;
+  }
+
+  .select-option-leave-active {
+    animation: animate-modal-bottom .2s reverse;
+  }
+
   .v-enter-active {
     animation: fade .2s forwards;
   }
 
   .v-leave-active {
-    animation: fade .2s reverse;
+    animation: fade .1s reverse;
   }
 </style>

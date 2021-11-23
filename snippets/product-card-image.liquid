@@ -3,7 +3,7 @@
     <div class="relative swiper swiper-{{- product.id }} group">
       <div class="swiper-wrapper">
         {% for image in product.images %}
-        <div class="swiper-slide">
+        <div class="swiper-slide flex justify-center items-center">
           <img
             src="{{ image.src | img_url: '590x590' }}"
             alt="{{ image.alt | escape }}"

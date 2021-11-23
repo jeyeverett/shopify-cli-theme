@@ -9,7 +9,7 @@
     px-4
     py-2
     border border-gray-300
-	rounded-sm
+		rounded-sm
     bg-white
     z-20
     shadow
@@ -23,7 +23,7 @@
 		class="px-2 pt-2 overflow-scroll overflow-x-hidden overflow-y-auto scrollbar"
 		style="max-height: 75%;"
 	>
-		<ul>
+		<transition-group tag="ul" name="cart-list">
 			<li
 				v-for="item in cartData.items"
 				:key="item.title"
@@ -60,7 +60,7 @@
 					</span>
 				</div>
 			</li>
-		</ul>
+		</transition-group>
 	</div>
 	
 	<div class="absolute bottom-5" style="width: 87.5%" v-if="cartData && cartCount > 0">
