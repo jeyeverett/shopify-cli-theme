@@ -14,7 +14,7 @@
           class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
           v-if="!isOnSale"
         >
-          @{ toPrice(getPrice.price) }
+          @{ isAvailable ? toPrice(getPrice.price) : 'Sold Out!' }
         </div>
         <div
           class="
@@ -30,14 +30,18 @@
           v-else
         >
           <span>
-            <span class="text-gray-500 line-through text-base">
+            <span
+              class="text-gray-500 line-through text-base"
+              v-if="isAvailable"
+            >
               @{ toPrice(getPrice.price) }
             </span>
             <span class="pl-1 text-gray-700">
-              @{ toPrice(getPrice.compare_at_price) }
+              @{ isAvailable ? toPrice(getPrice.compare_at_price) : 'Sold Out!'
+              }
             </span>
           </span>
-          {% render 'badge-sale' %}
+          <span v-if="isAvailable"> {% render 'badge-sale' %} </span>
         </div>
       </div>
       <div
@@ -126,6 +130,15 @@
             }
           });
           return price;
+        },
+        isAvailable() {
+          let available = false;
+          this.savedProduct.variants.forEach((variant) => {
+            if (variant.id === this.variantId && variant.available === true) {
+              available = true;
+            }
+          });
+          return available;
         },
         isOnSale() {
           const { price, compare_at_price } = this.getPrice;

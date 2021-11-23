@@ -1,4 +1,4 @@
-<header class="bg-white xs:fixed w-full top-0 left-0 z-10" id="header">
+<header class="bg-white xs:fixed w-full top-0 left-0 z-20" id="header">
   <div class="relative pb-1 xs:pb-0 border-b-2 border-gray-300 xs:border-b-0">
     <nav class="flex w-full">
       {% render 'nav-feature' %}
@@ -272,19 +272,19 @@
 
   .cart-list-enter-from {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateY(-30px);
   }
   .cart-list-enter-active {
     transition: all .2s ease-out;
   }
   .cart-list-enter-to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
   
   .cart-list-leave-from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
   .cart-list-leave-active {
     transition: all .2s ease-out;
@@ -292,11 +292,11 @@
   }
   .cart-list-leave-to {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateY(-30px);
   }
   
   .cart-list-move {
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease;
   }
 
   @keyframes quantity-icon-hover {
