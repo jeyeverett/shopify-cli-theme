@@ -7,6 +7,7 @@ sections/template-blog.liquid
 sections/template-cart.liquid
 sections/template-collection.liquid
 sections/template-product.liquid
+sections/template-search.liquid
 sections/template-list-collections.liquid
 sections/featured-collection.liquid
 sections/contact-form.liquid
@@ -16,6 +17,7 @@ snippets/nav-feature.liquid
 snippets/nav-site.liquid
 snippets/modal-mobile.liquid
 snippets/pagination.liquid
+snippets/product-form.liquid
 snippets/product-media.liquid
 snippets/product-card.liquid
 snippets/product-card-image.liquid

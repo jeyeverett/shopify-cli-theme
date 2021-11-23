@@ -1,5 +1,4 @@
 <div
-  @click="toggleOptionsList(option)"
   class="text-center relative"
   style="opacity: 0"
   :style="{ opacity: isCartLoading ? 0 : 1 }"
@@ -11,44 +10,46 @@
   </span>
   <span class="text-gray-700">@{form.selected[option.name]}</span>
 </div>
-<ul
-  v-show="option.visible"
-  class="absolute left-0 w-full select-none bg-white rounded-sm"
-  style="bottom: 102%; width: 104%; left: -2%; opacity: 0"
-  :style="{ opacity: isCartLoading ? 0 : 1 }"
->
-  <li
-    v-for="(value, index) in option.values"
-    :key="value"
-    @click="updateSelected(option, value)"
-    class="
-      w-full
-      px-4
-      py-2
-      my-2
-      border border-gray-700
-      rounded-sm
-      shadow
-      bg-white
-      hover:bg-gray-200
-      transform
-      scale-95
-      cursor-pointer
-      box-border
-      transition-colors
-      text-gray-700
-      option-item
-      text-center
-      relative
-      z-10
-    "
+<transition name="select-option">
+  <ul
+    v-show="option.visible"
+    class="absolute left-0 w-full select-none bg-white rounded-sm"
+    style="bottom: 102%; width: 104%; left: -2%; opacity: 0"
+    :style="{ opacity: isCartLoading ? 0 : 1 }"
   >
-    @{value}
-  </li>
-</ul>
+    <li
+      v-for="(value, index) in option.values"
+      :key="value"
+      @click="updateSelected(option, value)"
+      class="
+        w-full
+        px-4
+        py-2
+        my-2
+        border border-gray-700
+        rounded-sm
+        shadow
+        bg-white
+        hover:bg-gray-200
+        transform
+        scale-95
+        cursor-pointer
+        box-border
+        transition-colors
+        text-gray-700
+        option-item
+        text-center
+        relative
+        z-10
+      "
+    >
+      @{value}
+    </li>
+  </ul>
+</transition>
 <div
   class="hide-backdrop cursor-default"
   :class="{ 'show-backdrop': option.visible }"
   v-show="option.visible"
-  @click="closeOptions"
+  @click.stop="closeAllOptions"
 ></div>

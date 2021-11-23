@@ -1,0 +1,54 @@
+
+
+<section
+  class="
+    px-6
+    pt-2
+    xs:pt-4
+    sm:py-8 sm:px-12
+    flex flex-col
+    items-center
+    justify-center
+  "
+>
+	<h1 class="text-gray-700 text-2xl lg:text-3xl xl:text-4xl mb-4 sm:mb-8">
+		Search Results
+	</h1>
+
+	{% if search.performed and search.results.size > 0 %}
+		<p class="text-gray-700 text-sm mb-4 sm:mb-8">
+			{{ search.results.size }} results found for "{{ search.terms | escape }}"
+		</p>
+		<div
+			class="
+				w-full
+				sm:w-5/6
+				md:w-3/4
+				xl:w-2/3
+				mx-auto
+				grid grid-cols-1
+				sm:grid-cols-2
+				lg:grid-cols-3
+				row-auto
+				gap-8
+				mb-8
+			"
+		>
+			{% paginate search.results by 6 %}
+				{% for item in search.results %}
+					{% case item.object_type %}
+						{% when 'product' %}
+							{% render 'product-card', product: item %}
+					{% endcase %}
+				{% endfor %}
+				<span class="col-span-1 sm:col-span-2 lg:col-span-3">
+					{% render 'pagination', pagination: paginate %}
+				</span>
+			{% endpaginate %}
+		</div>
+	{% else %}
+		<h2 class="text-gray-700 text-lg lg:text-xl xl:text-2xl">
+			No results found for "{{ search.terms | escape }}"
+		</h2>
+	{% endif %}
+</section>

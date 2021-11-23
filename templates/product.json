@@ -1,7 +1,19 @@
 {
   "sections": {
     "template": {
-      "type": "template-product"
+      "type": "template-product",
+      "blocks": {
+        "options": {
+          "type": "options"
+        },
+        "price": {
+          "type": "price"
+        },
+        "add_to_cart": {
+          "type": "add_to_cart"
+        }
+      },
+      "block_order": ["price", "options", "add_to_cart"]
     }
   },
   "order": ["template"]

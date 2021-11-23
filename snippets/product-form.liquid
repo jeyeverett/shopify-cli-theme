@@ -6,86 +6,95 @@
   <transition mode="out-in">
     <div v-if="isCartLoading" class="text-center">{% render 'spinner' %}</div>
     <div v-else>
-      <div
-        style="opacity: 0; height: 0"
-        :style="{ opacity: isCartLoading ? 0 : 1, height: isCartLoading ? 0 : 'auto' }"
-      >
-        <div
-          class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
-          v-if="!isOnSale"
-        >
-          @{ isAvailable ? toPrice(getPrice.price) : 'Sold Out!' }
-        </div>
-        <div
-          class="
-            font-medium
-            text-base
-            md:text-lg
-            lg:text-xl
-            text-gray-700
-            flex
-            justify-between
-            items-center
-          "
-          v-else
-        >
-          <span>
-            <span
-              class="text-gray-500 line-through text-base"
-              v-if="isAvailable"
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'price' %}
+            <div
+              style="opacity: 0; height: 0"
+              :style="{ opacity: isCartLoading ? 0 : 1, height: isCartLoading ? 0 : 'auto' }"
             >
-              @{ toPrice(getPrice.price) }
-            </span>
-            <span class="pl-1 text-gray-700">
-              @{ isAvailable ? toPrice(getPrice.compare_at_price) : 'Sold Out!'
-              }
-            </span>
-          </span>
-          <span v-if="isAvailable"> {% render 'badge-sale' %} </span>
-        </div>
-      </div>
-      <div
-        v-for="(option, optionIndex) in form.options"
-        :key="option.name"
-        :class="['my-2 w-full px-4 py-2 border border-gray-500 bg-white hover:bg-gray-200 rounded-sm transition-colors cursor-pointer relative select-none shadow', { 'bg-gray-200': option.visible }]"
-      >
-        {% render 'product-option-select' %}
-      </div>
-      <button
-        class="
-          px-4
-          py-2
-          border border-gray-700
-          rounded-sm
-          shadow
-          bg-gray-700
-          text-white
-          hover:bg-transparent hover:text-gray-700
-          transition-all
-          w-full
-        "
-        @click="addToCart"
-        style="opacity: 0"
-        :style="{ opacity: isCartLoading ? 0 : 1 }"
-        :class="{ 'pointer-events-none': isCartUpdating }"
-      >
-        <transition mode="out-in">
-          <div
-            v-if="isCartUpdating"
-            class="flex justify-center items-center h-6"
-          >
-            <span class="relative">
-              <span class="invisible">Add to cart</span>
-              <span
-                class="absolute -top-2 left-5 flex items-center justify-center"
+              <div
+                class="font-medium text-base md:text-lg lg:text-xl text-gray-700"
+                v-if="!isOnSale"
               >
-                {% render 'spinner-small' %}
-              </span>
-            </span>
-          </div>
-          <span v-else>Add to cart</span>
-        </transition>
-      </button>
+                @{ isAvailable ? toPrice(getPrice.price) : 'Sold Out!' }
+              </div>
+              <div
+                class="
+                  font-medium
+                  text-base
+                  md:text-lg
+                  lg:text-xl
+                  text-gray-700
+                  flex
+                  justify-between
+                  items-center
+                "
+                v-else
+              >
+                <span>
+                  <span
+                    class="text-gray-500 line-through text-base"
+                    v-if="isAvailable"
+                  >
+                    @{ toPrice(getPrice.price) }
+                  </span>
+                  <span class="pl-1 text-gray-700">
+                    @{ isAvailable ? toPrice(getPrice.compare_at_price) : 'Sold Out!'
+                    }
+                  </span>
+                </span>
+                <span v-if="isAvailable"> {% render 'badge-sale' %} </span>
+              </div>
+            </div>
+          {% when 'options' %}
+            <div
+              v-for="(option, optionIndex) in form.options"
+              :key="option.name"
+              :class="['my-2 w-full px-4 py-2 border border-gray-500 bg-white hover:bg-gray-200 rounded-sm transition-colors cursor-pointer relative select-none shadow', { 'bg-gray-200': option.visible }]"
+              @click="toggleOptionsList(option)"
+
+            >
+              {% render 'product-option-select' %}
+            </div>
+          {% when 'add_to_cart' %}
+            <button
+              class="
+                px-4
+                py-2
+                border border-gray-700
+                rounded-sm
+                shadow
+                bg-gray-700
+                text-white
+                hover:bg-transparent hover:text-gray-700
+                transition-all
+                w-full
+              "
+              @click="addToCart"
+              style="opacity: 0"
+              :style="{ opacity: isCartLoading ? 0 : 1 }"
+              :class="{ 'pointer-events-none': isCartUpdating, 'pointer-events-none': !isAvailable }"
+            >
+              <transition mode="out-in">
+                <div
+                  v-if="isCartUpdating"
+                  class="flex justify-center items-center h-6"
+                >
+                  <span class="relative">
+                    <span class="invisible">Add to cart</span>
+                    <span
+                      class="absolute -top-2 left-5 flex items-center justify-center"
+                    >
+                      {% render 'spinner-small' %}
+                    </span>
+                  </span>
+                </div>
+                <span v-else>Add to cart</span>
+              </transition>
+            </button>
+        {% endcase %}
+      {% endfor %}
     </div>
   </transition>
 </form>
@@ -104,11 +113,10 @@
           isCartUpdating: false,
         };
       },
-      created() {
+      async created() {
         store.vue.cartLoading(true);
-        this.getProductData().then(() => {
-          store.vue.cartLoading(false);
-        });
+        await this.getProductData();
+        store.vue.cartLoading(false);
       },
       computed: {
         variantId() {
@@ -201,9 +209,10 @@
           }
         },
         toggleOptionsList(option) {
+          this.closeAllOptions();
           option.visible = !option.visible;
         },
-        closeOptions() {
+        closeAllOptions() {
           this.form.options.forEach((option) => (option.visible = false));
         },
         updateSelected(option, value) {
@@ -221,6 +230,14 @@
 <style>
   .option-item:last-child {
     border-bottom: 1px solid rgba(55, 65, 81, 1);
+  }
+
+  .select-option-enter-active {
+    animation: animate-modal-bottom 0.2s forwards;
+  }
+
+  .select-option-leave-active {
+    animation: animate-modal-bottom 0.2s reverse;
   }
 
   .v-enter-active {

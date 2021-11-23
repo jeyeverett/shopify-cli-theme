@@ -65,17 +65,20 @@
         v-else
       >
         <span class="relative w-full rounded-sm">
-          <input 
-            type="search" 
-            style="height: 38px;" 
-            class="w-full border border-gray-300 px-4 text-center shadow text-gray-500 relative z-10 rounded-sm" 
-            placeholder="type your search here..." 
-            id="search-modal"
-            @input="onSearch" 
-            v-model="search">
-            <span class="hidden sm:block absolute top-2 left-2 z-20 pr-2 border-r border-gray-300">
-              {% render 'icon-search' %}
-            </span>
+          <form action="{{ routes.search_url }}" method="get">
+            <input 
+              type="search" 
+              name="q"
+              style="height: 38px;" 
+              class="w-full border border-gray-300 px-4 text-center shadow text-gray-500 relative z-10 rounded-sm" 
+              placeholder="type your search here..." 
+              id="search-modal"
+              @input="onSearch" 
+              v-model="search">
+              <button type="submit" class="absolute top-2 left-2 z-20 pr-2 border-r border-gray-300">
+                {% render 'icon-search' %}
+              </button>
+          </form>
         </span>
       </nav>
     </transition>

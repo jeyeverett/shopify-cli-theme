@@ -93,7 +93,7 @@
         @click="addToCart"
         style="opacity: 0"
         :style="{ opacity: isCartLoading ? 0 : 1 }"
-        :class="{ 'pointer-events-none': isCartUpdating }"
+        :class="{ 'pointer-events-none': isCartUpdating, 'pointer-events-none': !isAvailable }"
       >
         <transition 
           mode="out-in"
@@ -130,11 +130,10 @@
           isCartUpdating: false
         };
       },
-      created() {
+      async created() {
         store.vue.cartLoading(true);
-				this.getProductData().then(() => {
-          store.vue.cartLoading(false)
-        });
+				await this.getProductData();
+        store.vue.cartLoading(false);
       },
       computed: {
         variantId() {

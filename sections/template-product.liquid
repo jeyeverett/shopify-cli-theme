@@ -9,7 +9,13 @@
 		px-6 pt-2 xs:pt-4 sm:py-8 lg:px-12
   "
 >
-	<figure class="h-full w-full sm:w-3/4 md:w-full xl:w-3/4 mx-auto relative select-none">
+	<figure 
+    class="h-full w-full sm:w-3/4 md:w-full xl:w-3/4 mx-auto relative select-none
+      {% if section.settings.reverse_columns %}
+        order-last
+      {% endif %}
+    "
+  >
 		<div class="h-full relative swiper swiper-{{- product.id -}}">
 			<div class="h-full swiper-wrapper">
 				{% for media in product.media %}
@@ -40,11 +46,11 @@
       flex flex-col
       justify-between
     "
-  >
+  > 
     <div>
-			<h1 class="sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
-				{{ product.title }}
-			</h1>
+      <h1 class="xs:text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-700">
+        {{ product.title }}
+      </h1>
 
       <p class="text-justify mt-1 lg:mt-2 text-gray-700">
         {{ product.description }}
@@ -76,3 +82,55 @@
     },
   });
 </script>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "reverse_columns",
+      "default": false,
+      "label": "Reverse image and info columns"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "options",
+      "name": "Options",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "add_to_cart",
+      "name": "Add to cart",
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "name":"Product",
+      "blocks": [
+        {
+          "type": "price"
+        },
+        {
+          "type": "options"
+        },
+        {
+          "type": "add_to_cart"
+        }
+      ]
+    }
+  ],
+  	"presets": [
+		{
+			"name":"Featured Collection"
+		}
+	]
+}
+{% endschema %}
